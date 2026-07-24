@@ -1,0 +1,79 @@
+[
+  {
+    "patientId": "PAT001",
+    "name": "John Doe",
+    "diagnosis": "Lower Back Pain",
+
+    "ehrNotes": [
+      {
+        "date": "2026-01-10",
+        "text": "Completed physical therapy week 1."
+      },
+      {
+        "date": "2026-01-20",
+        "text": "Completed physical therapy week 3."
+      },
+      {
+        "date": "2026-02-25",
+        "text": "Completed six weeks of physical therapy."
+      }
+    ],
+
+    "imaging": [
+      {
+        "bodyPart": "Lumbar Spine",
+        "date": "2026-02-15",
+        "report": "Lumbar X-ray completed."
+      }
+    ],
+
+    "pharmacy": [
+      {
+        "medication": "Ibuprofen",
+        "category": "Pain Medication",
+        "date": "2026-01-05"
+      }
+    ]
+  },
+
+  {
+    "patientId": "PAT002",
+    "name": "Jane Smith",
+    "diagnosis": "Lower Back Pain",
+
+    "ehrNotes": [],
+
+    "imaging": [
+      {
+        "bodyPart": "Lumbar Spine",
+        "date": "2026-02-01",
+        "report": "Lumbar X-ray completed."
+      }
+    ],
+
+    "pharmacy": []
+  },
+
+  {
+    "patientId": "PAT003",
+    "name": "Michael Brown",
+    "diagnosis": "Lower Back Pain",
+
+    "ehrNotes": [
+      {
+        "date": "2026-02-01",
+        "text": "Physical therapy recommended."
+      }
+    ],
+
+    "imaging": [
+      {
+        "bodyPart": "Lumbar Spine",
+        "date": "2026-02-10",
+        "report": "Lumbar X-ray completed."
+      }
+    ],
+
+    "pharmacy": []
+  }
+]
