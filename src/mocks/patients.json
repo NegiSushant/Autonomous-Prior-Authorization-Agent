@@ -2,7 +2,12 @@
   {
     "patientId": "PAT001",
     "name": "John Doe",
-    "diagnosis": "Lower Back Pain",
+    "procedureCode": "72148",
+    "procedureName": "MRI Lumbar Spine Without Contrast",
+    "diagnosisCode": "M54.5",
+    "insurancePayer": "Blue Cross Blue Shield",
+
+    "diagnosis": "Low back pain",
 
     "ehrNotes": [
       {
@@ -39,7 +44,12 @@
   {
     "patientId": "PAT002",
     "name": "Jane Smith",
-    "diagnosis": "Lower Back Pain",
+    "procedureCode": "72149",
+    "procedureName": "MRI Lumbar Spine Without Contrast",
+    "diagnosisCode": "M54.5",
+    "insurancePayer": "Blue Cross Blue Shield",
+
+    "diagnosis": "Low back pain",
 
     "ehrNotes": [],
 
@@ -57,7 +67,12 @@
   {
     "patientId": "PAT003",
     "name": "Michael Brown",
-    "diagnosis": "Lower Back Pain",
+    "procedureCode": "72150",
+    "procedureName": "MRI Lumbar Spine Without Contrast",
+    "diagnosisCode": "M54.5",
+    "insurancePayer": "Blue Cross Blue Shield",
+
+    "diagnosis": "Low back pain",
 
     "ehrNotes": [
       {
