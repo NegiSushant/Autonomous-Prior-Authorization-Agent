@@ -25,34 +25,27 @@ export function shouldContinue(
     return END;
   }
 
-  // ---------------------------------------
   // AI requested tool(s)
-  // ---------------------------------------
   if (
     AIMessage.isInstance(lastMessage) &&
-    lastMessage.tool_calls &&
-    lastMessage.tool_calls.length > 0
+    (lastMessage.tool_calls?.length ?? 0) > 0
   ) {
     return "toolExecutor";
   }
 
-  // ---------------------------------------
   // Tool execution completed
-  // ---------------------------------------
+
   if (ToolMessage.isInstance(lastMessage)) {
     return "reflect";
   }
 
-  // ---------------------------------------
   // AI produced a final answer
-  // ---------------------------------------
   if (
     AIMessage.isInstance(lastMessage) &&
-    (!lastMessage.tool_calls || lastMessage.tool_calls.length === 0)
+    (lastMessage.tool_calls?.length ?? 0) === 0
   ) {
     return "formatter";
   }
 
   return END;
 }
-    

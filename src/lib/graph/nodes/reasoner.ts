@@ -16,24 +16,15 @@ export async function reasonerNode(
   state: PAAgentState,
 ): Promise<Partial<PAAgentState>> {
   const prompt = `Patient ${JSON.stringify(state.patientDetails, null, 2)}
-
-----------------------------------
-
-Policy Rules
-
-${state.policyRules.join("\n")}
-
-----------------------------------
-
-Evidence Collected
-
-${JSON.stringify(state.gatheredEvidence, null, 2)}
-
-----------------------------------
-
-Current Status
-
-${state.status}`;
+                  ---
+                  Policy Rules
+                  ${state.policyRules.join("\n")}
+                  ---
+                  Evidence Collected
+                  ${JSON.stringify(state.gatheredEvidence, null, 2)}
+                  ----
+                  Current Status
+                  ${state.status}`;
 
   const response = await reasonerLLM.invoke([
     new SystemMessage(REASONER_SYSTEM_PROMPT),
