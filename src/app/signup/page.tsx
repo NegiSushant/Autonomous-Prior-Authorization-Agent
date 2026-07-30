@@ -28,11 +28,7 @@ export default function SignUp() {
       setError("Invalid Inputs!");
       return;
     }
-    // const response = await axios.post(`${HTTP_BACKEND}/api/user/signUp`, {
-    //   username: String(formData.get("username")),
-    //   name: String(formData.get("name")),
-    //   password: String(formData.get("password")),
-    // });
+
     const response = await axios.post("/api/auth/signup", {
       email: String(formData.get("email")),
       name: String(formData.get("name")),

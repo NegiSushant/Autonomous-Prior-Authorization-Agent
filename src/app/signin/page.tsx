@@ -23,8 +23,6 @@ export default function SignIn() {
       return;
     }
     const response = await axios.post(`/api/auth/signin`, {
-      // email: formData.get("email"),
-      // password: formData.get("password"),
       email: parsedata.data.email,
       password: parsedata.data.password,
     });

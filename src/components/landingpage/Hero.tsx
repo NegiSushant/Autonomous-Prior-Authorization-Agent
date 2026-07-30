@@ -2,14 +2,14 @@
 
 import { motion } from "framer-motion";
 import Workflow from "../landingpage/Workflow";
-import { ArrowRight, ShieldCheck, BrainCircuit } from "lucide-react";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 
 export default function Hero() {
   return (
     <section className="relative pt-40 pb-24">
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute w-[900px] h-[900px] rounded-full blur-[180px] bg-blue-700/20 -top-52 -left-52" />
-        <div className="absolute w-[600px] h-[600px] rounded-full blur-[180px] bg-cyan-600/20 bottom-0 right-0" />
+        <div className="absolute w-225 h-225 rounded-full blur-[180px] bg-blue-700/20 -top-52 -left-52" />
+        <div className="absolute w-150 h-150 rounded-full blur-[180px] bg-cyan-600/20 bottom-0 right-0" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-8 grid lg:grid-cols-2 gap-20 items-center">
