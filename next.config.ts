@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
     DATABASE_URL: process.env.DATABASE_URL,
     JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
+    GITHUB_SECRET: process.env.GITHUB_SECRET,
+    GITHUB_ID: process.env.GITHUB_ID,
   },
   reactCompiler: true,
 };
