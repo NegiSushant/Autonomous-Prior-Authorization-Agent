@@ -1,9 +1,10 @@
 "use client";
 
 import { SignInSchema } from "../../types/uitypes";
-import axios from "axios";
+// import axios from "axios";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function SignIn() {
   const [error, setError] = useState<string | null>(null);
@@ -22,14 +23,18 @@ export default function SignIn() {
       setError("Invalid Input data!");
       return;
     }
-    const response = await axios.post(`/api/auth/signin`, {
+    const result = await signIn("credentials", {
       email: parsedata.data.email,
       password: parsedata.data.password,
+      redirect: false,
     });
-    if (response.status === 200) {
-      localStorage.setItem("authorization", response.data.token);
-      router.push("/apa-agent");
+
+    if (result?.error) {
+      setError("Invalid email or password");
+      return;
     }
+
+    router.push("/apa-agent");
   };
   return (
     <div>

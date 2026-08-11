@@ -64,12 +64,12 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.email = user.email;
       }
-      if (!process.env.JWT_SECRET) {
-        throw new Error("JWT_SECRET is ABSOLUTELY REQUIRED and not set");
+      if (!process.env.JWT_ACCESS_SECRET) {
+        throw new Error("JWT_ACCESS_SECRET is ABSOLUTELY REQUIRED and not set");
       }
       token.accessToken = jwt.sign(
         { id: token.id, email: token.email },
-        process.env.JWT_SECRET,
+        process.env.JWT_ACCESS_SECRET,
         { expiresIn: "7d" },
       );
       return token;
@@ -84,7 +84,8 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  secret: process.env.JWT_ACCESS_SECRET,
+  // secret: process.env.JWT_ACCESS_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 export default NextAuth(authOptions);
