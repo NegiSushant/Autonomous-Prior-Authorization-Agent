@@ -16,9 +16,16 @@ export const search_imaging_history = tool(
 
     const searchBodyPart = bodyPart.toLowerCase();
 
-    const matchingRecords = patient.imaging.filter((record) =>
-      record.bodyPart.toLowerCase().includes(searchBodyPart),
-    );
+    const matchingRecords = patient.imaging
+      .filter((record) =>
+        record.bodyPart.toLowerCase().includes(searchBodyPart),
+      )
+      .map((record) => ({
+        documentId: record.documentId,
+        bodyPart: record.bodyPart,
+        date: record.date,
+        report: record.report,
+      }));
 
     return {
       success: true,

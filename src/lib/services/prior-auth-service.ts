@@ -23,6 +23,7 @@ export async function executePriorAuthorization(
 
     policyRules: [policyText],
     gatheredEvidence: [],
+    conflicts: [],
     iterationCount: 0,
     status: "in_progress",
     messages: [],

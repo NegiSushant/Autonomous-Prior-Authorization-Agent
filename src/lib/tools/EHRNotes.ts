@@ -1,5 +1,5 @@
 import { tool } from "@langchain/core/tools";
-import z from "zod";
+import { z } from "zod";
 import patients from "../../mocks/patients.json";
 
 export const search_ehr_notes = tool(
@@ -15,9 +15,14 @@ export const search_ehr_notes = tool(
     }
 
     const keyword = keywords.toLowerCase();
-    const matchingNotes = patient.ehrNotes.filter((note) =>
-      note.text.toLowerCase().includes(keyword),
-    );
+
+    const matchingNotes = patient.ehrNotes
+      .filter((note) => note.text.toLowerCase().includes(keyword))
+      .map((note) => ({
+        documentId: note.documentId,
+        date: note.date,
+        text: note.text,
+      }));
 
     return {
       success: true,
@@ -27,10 +32,13 @@ export const search_ehr_notes = tool(
   },
   {
     name: "search_ehr_notes",
+
     description:
       "Search the patient's clinical EHR notes for documentation related to treatments, diagnoses, symptoms, or completed conservative therapy. Use this tool when verifying whether required clinical evidence exists.",
+
     schema: z.object({
       patientId: z.string().describe("Unique identifier of the patient."),
+
       keywords: z
         .string()
         .describe(

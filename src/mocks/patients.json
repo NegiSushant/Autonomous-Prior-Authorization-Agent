@@ -12,14 +12,17 @@
     "ehrNotes": [
       {
         "date": "2026-01-10",
+        "documentId": "EHR-PAT001-001",
         "text": "Completed physical therapy week 1."
       },
       {
         "date": "2026-01-20",
+        "documentId": "EHR-PAT001-002",
         "text": "Completed physical therapy week 3."
       },
       {
         "date": "2026-02-25",
+        "documentId": "EHR-PAT001-003",
         "text": "Completed six weeks of physical therapy."
       }
     ],
@@ -28,6 +31,7 @@
       {
         "bodyPart": "Lumbar Spine",
         "date": "2026-02-15",
+        "documentId": "IMG-PAT001-001",
         "report": "Lumbar X-ray completed."
       }
     ],
@@ -36,7 +40,8 @@
       {
         "medication": "Ibuprofen",
         "category": "Pain Medication",
-        "date": "2026-01-05"
+        "date": "2026-01-05",
+        "documentId": "RX-PAT001-001"
       }
     ]
   },
@@ -57,6 +62,7 @@
       {
         "bodyPart": "Lumbar Spine",
         "date": "2026-02-01",
+        "documentId": "IMG-PAT002-001",
         "report": "Lumbar X-ray completed."
       }
     ],
@@ -77,6 +83,7 @@
     "ehrNotes": [
       {
         "date": "2026-02-01",
+        "documentId": "EHR-PAT003-001",
         "text": "Physical therapy recommended."
       }
     ],
@@ -85,6 +92,7 @@
       {
         "bodyPart": "Lumbar Spine",
         "date": "2026-02-10",
+        "documentId": "IMG-PAT003-001",
         "report": "Lumbar X-ray completed."
       }
     ],
@@ -103,10 +111,12 @@
     "ehrNotes": [
       {
         "date": "2026-01-10",
+        "documentId": "EHR-PAT004-001",
         "text": "Patient refused physical therapy."
       },
       {
         "date": "2026-02-25",
+        "documentId": "EHR-PAT004-002",
         "text": "Patient completed 6 weeks of physical therapy."
       }
     ],
@@ -114,6 +124,7 @@
       {
         "bodyPart": "Lumbar Spine",
         "date": "2026-02-15",
+        "documentId": "IMG-PAT004-001",
         "report": "Lumbar X-ray completed."
       }
     ],
@@ -121,44 +132,50 @@
   },
 
   {
-  "patientId": "PAT005",
-  "name": "Michael Wilson",
-  "procedureCode": "72148",
-  "procedureName": "MRI Lumbar Spine Without Contrast",
-  "diagnosisCode": "M54.5",
-  "insurancePayer": "Blue Cross Blue Shield",
-  "diagnosis": "Low back pain",
-  "ehrNotes": [
-    {
-      "date": "2026-01-05",
-      "text": "Patient completed physical therapy for right knee pain."
-    },
-    {
-      "date": "2026-01-12",
-      "text": "Patient continues strengthening exercises for knee injury."
-    },
-    {
-      "date": "2026-01-20",
-      "text": "Patient reports improvement in right knee pain."
-    },
-    {
-      "date": "2026-02-01",
-      "text": "Patient completed additional therapy for knee injury."
-    }
-  ],
-  "imaging": [
-    {
-      "bodyPart": "Right Knee",
-      "date": "2026-02-10",
-      "report": "Right knee X-ray completed."
-    }
-  ],
-  "pharmacy": [
-    {
-      "medication": "Ibuprofen",
-      "category": "Pain Medication",
-      "date": "2026-01-15"
-    }
-  ]
-}
+    "patientId": "PAT005",
+    "name": "Michael Wilson",
+    "procedureCode": "72148",
+    "procedureName": "MRI Lumbar Spine Without Contrast",
+    "diagnosisCode": "M54.5",
+    "insurancePayer": "Blue Cross Blue Shield",
+    "diagnosis": "Low back pain",
+    "ehrNotes": [
+      {
+        "date": "2026-01-05",
+        "documentId": "EHR-PAT005-001",
+        "text": "Patient completed physical therapy for right knee pain."
+      },
+      {
+        "date": "2026-01-12",
+        "documentId": "EHR-PAT005-002",
+        "text": "Patient continues strengthening exercises for knee injury."
+      },
+      {
+        "date": "2026-01-20",
+        "documentId": "EHR-PAT005-003",
+        "text": "Patient reports improvement in right knee pain."
+      },
+      {
+        "date": "2026-02-01",
+        "documentId": "EHR-PAT005-004",
+        "text": "Patient completed additional therapy for knee injury."
+      }
+    ],
+    "imaging": [
+      {
+        "bodyPart": "Right Knee",
+        "date": "2026-02-10",
+        "documentId": "IMG-PAT005-001",
+        "report": "Right knee X-ray completed."
+      }
+    ],
+    "pharmacy": [
+      {
+        "medication": "Ibuprofen",
+        "category": "Pain Medication",
+        "date": "2026-01-15",
+        "documentId": "RX-PAT005-001"
+      }
+    ]
+  }
 ]

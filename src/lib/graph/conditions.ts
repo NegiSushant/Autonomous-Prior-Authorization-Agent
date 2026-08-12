@@ -14,13 +14,15 @@ export const MAX_ITERATIONS = 5;
 export function shouldContinue(
   state: PAAgentState,
 ): "toolExecutor" | "reflect" | "formatter" | typeof END {
+  // Conflict has highest priority.
+  if (state.conflicts.length > 0) {
+    return "formatter";
+  }
   // Prevent infinite loops
   if (state.iterationCount >= MAX_ITERATIONS) {
     return "formatter";
   }
-
   const lastMessage = state.messages.at(-1);
-
   if (!lastMessage) {
     return END;
   }
@@ -34,7 +36,6 @@ export function shouldContinue(
   }
 
   // Tool execution completed
-
   if (ToolMessage.isInstance(lastMessage)) {
     return "reflect";
   }
@@ -46,6 +47,5 @@ export function shouldContinue(
   ) {
     return "formatter";
   }
-
   return END;
 }

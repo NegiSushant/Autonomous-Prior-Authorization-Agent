@@ -14,6 +14,7 @@ export interface PAAgentState {
   patientDetails: z.infer<typeof PriorAuthRequestSchema>;
   policyRules: string[];
   gatheredEvidence: z.infer<typeof ClinicalEvidenceSchema>[];
+  conflicts: string[];
   iterationCount: number;
   status: z.infer<typeof AgentStatusSchema>;
   messages: BaseMessage[];

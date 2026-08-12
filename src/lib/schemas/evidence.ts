@@ -6,6 +6,7 @@ export const EvidenceStatusSchema = z.enum(["Met", "Not Met", "Unclear"]);
 
 export const ClinicalEvidenceSchema = z.object({
   sourceType: EvidenceSourceSchema,
+  documentId: z.string(),
   dateFound: z.string(),
   status: EvidenceStatusSchema,
   snippetText: z.string(),

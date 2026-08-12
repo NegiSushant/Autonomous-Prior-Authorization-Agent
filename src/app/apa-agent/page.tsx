@@ -13,7 +13,6 @@ export default function Home() {
 
   async function runInvestigation() {
     setLoading(true);
-
     try {
       const response = await fetch("/api/prior-auth", {
         method: "POST",
@@ -24,9 +23,7 @@ export default function Home() {
           patientId,
         }),
       });
-
       const data = await response.json();
-
       setResult(data.data);
     } finally {
       setLoading(false);
@@ -36,17 +33,15 @@ export default function Home() {
   return (
     <main className="mx-auto max-w-7xl p-8">
       <h1 className="mb-8 text-3xl font-bold">Prior Authorization Dashboard</h1>
-
       <PatientSelector patientId={patientId} onChange={setPatientId} />
-
       <InvestigationRunner loading={loading} onRun={runInvestigation} />
-
       {result && (
         <RecommendationPanel
           recommendation={result.recommendation}
           status={result.status}
           trace={result.executionTrace}
           evidence={result.gatheredEvidence}
+          criteria={result.criteria}
         />
       )}
     </main>

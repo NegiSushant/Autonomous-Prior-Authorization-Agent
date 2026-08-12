@@ -1,6 +1,6 @@
 import { tool } from "@langchain/core/tools";
+import { z } from "zod";
 import patients from "../../mocks/patients.json";
-import z from "zod";
 
 export const search_pharmacy_records = tool(
   ({ patientId, medicationCategory }) => {
@@ -15,9 +15,15 @@ export const search_pharmacy_records = tool(
     }
 
     const category = medicationCategory.toLowerCase();
-    const matchingRecords = patient.pharmacy.filter((record) =>
-      record.category.toLowerCase().includes(category),
-    );
+
+    const matchingRecords = patient.pharmacy
+      .filter((record) => record.category.toLowerCase().includes(category))
+      .map((record) => ({
+        documentId: record.documentId,
+        medication: record.medication,
+        category: record.category,
+        date: record.date,
+      }));
 
     return {
       success: true,
@@ -31,6 +37,7 @@ export const search_pharmacy_records = tool(
   },
   {
     name: "search_pharmacy_records",
+
     description:
       "Search the patient's pharmacy records for prescription history. Use this tool to verify whether the patient has been prescribed medications belonging to a specific category (for example, pain medication or anti-inflammatory drugs) as evidence of conservative treatment.",
 
