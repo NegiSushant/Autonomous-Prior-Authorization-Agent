@@ -16,6 +16,14 @@ const patients = [
     id: "PAT003",
     name: "Robert Johnson",
   },
+  {
+    id: "PAT004",
+    name: "Emily Davis",
+  },
+  {
+    id: "PAT005",
+    name: "Michael Wilson",
+  },
 ];
 
 export default function PatientSelector({

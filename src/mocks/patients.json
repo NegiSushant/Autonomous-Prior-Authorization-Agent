@@ -90,5 +90,75 @@
     ],
 
     "pharmacy": []
-  }
+  },
+
+  {
+    "patientId": "PAT004",
+    "name": "Emily Davis",
+    "procedureCode": "72148",
+    "procedureName": "MRI Lumbar Spine Without Contrast",
+    "diagnosisCode": "M54.5",
+    "insurancePayer": "Blue Cross Blue Shield",
+    "diagnosis": "Low back pain",
+    "ehrNotes": [
+      {
+        "date": "2026-01-10",
+        "text": "Patient refused physical therapy."
+      },
+      {
+        "date": "2026-02-25",
+        "text": "Patient completed 6 weeks of physical therapy."
+      }
+    ],
+    "imaging": [
+      {
+        "bodyPart": "Lumbar Spine",
+        "date": "2026-02-15",
+        "report": "Lumbar X-ray completed."
+      }
+    ],
+    "pharmacy": []
+  },
+
+  {
+  "patientId": "PAT005",
+  "name": "Michael Wilson",
+  "procedureCode": "72148",
+  "procedureName": "MRI Lumbar Spine Without Contrast",
+  "diagnosisCode": "M54.5",
+  "insurancePayer": "Blue Cross Blue Shield",
+  "diagnosis": "Low back pain",
+  "ehrNotes": [
+    {
+      "date": "2026-01-05",
+      "text": "Patient completed physical therapy for right knee pain."
+    },
+    {
+      "date": "2026-01-12",
+      "text": "Patient continues strengthening exercises for knee injury."
+    },
+    {
+      "date": "2026-01-20",
+      "text": "Patient reports improvement in right knee pain."
+    },
+    {
+      "date": "2026-02-01",
+      "text": "Patient completed additional therapy for knee injury."
+    }
+  ],
+  "imaging": [
+    {
+      "bodyPart": "Right Knee",
+      "date": "2026-02-10",
+      "report": "Right knee X-ray completed."
+    }
+  ],
+  "pharmacy": [
+    {
+      "medication": "Ibuprofen",
+      "category": "Pain Medication",
+      "date": "2026-01-15"
+    }
+  ]
+}
 ]
