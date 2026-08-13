@@ -14,7 +14,8 @@ import Link from "next/link";
 
 export default function ArchitecturePage() {
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
+    // <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
+    <div className="bg-white dark:bg-slate-900 min-h-screen text-slate-900 dark:text-white font-sans pb-20">
       {/* Hero Section */}
       <header className="px-8 py-20 mx-auto max-w-5xl text-center">
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 mb-6">

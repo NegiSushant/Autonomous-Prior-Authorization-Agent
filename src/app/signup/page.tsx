@@ -85,7 +85,9 @@ export default function SignUp() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex flex-col justify-center px-6 py-12 lg:px-8">
+    // <div className="min-h-screen bg-black flex flex-col justify-center px-6 py-12 lg:px-8">
+    // bg-white dark:bg-slate-900 min-h-screen text-slate-900 dark:text-white
+    <div className="bg-white dark:bg-slate-900 min-h-screen text-slate-900 dark:text-white flex flex-col justify-center px-6 py-12 lg:px-8">
       {/* Heading */}
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">

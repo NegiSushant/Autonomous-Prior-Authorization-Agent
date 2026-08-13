@@ -10,7 +10,8 @@ import {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
+    // <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
+    <div className="bg-white dark:bg-slate-900 min-h-screen text-slate-900 dark:text-white">
       {/* Hero Section */}
       <header className="px-8 py-24 mx-auto max-w-6xl text-center">
         <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold mb-6">
