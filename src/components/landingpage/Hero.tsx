@@ -1,82 +1,31 @@
-"use client";
-
-import { motion } from "framer-motion";
-import Workflow from "../landingpage/Workflow";
-import { ArrowRight, ShieldCheck } from "lucide-react";
+import { Activity, ArrowRight } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="relative pt-40 pb-24">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute w-225 h-225 rounded-full blur-[180px] bg-blue-700/20 -top-52 -left-52" />
-        <div className="absolute w-150 h-150 rounded-full blur-[180px] bg-cyan-600/20 bottom-0 right-0" />
+    <header className="px-8 py-24 mx-auto max-w-6xl text-center">
+      <div className="inline-flex items-center space-x-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-3 py-1 rounded-full text-sm font-semibold mb-6">
+        <Activity size={16} />
+        <span>The safest AI for Healthcare Administration</span>
       </div>
-
-      <div className="relative max-w-7xl mx-auto px-8 grid lg:grid-cols-2 gap-20 items-center">
-        <div>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="inline-flex items-center gap-2 rounded-full border border-blue-500/40 bg-blue-500/10 px-5 py-2 text-blue-300 text-sm"
-          >
-            <ShieldCheck size={16} />
-            Healthcare AI Orchestration Platform
-          </motion.div>
-
-          <motion.h1
-            initial={{ y: 40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="mt-8 text-6xl lg:text-7xl font-black leading-tight"
-          >
-            Autonomous Prior Authorization
-            <span className="block text-blue-400">with Explainable AI</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.35 }}
-            className="mt-8 text-xl leading-9 text-slate-300 max-w-xl"
-          >
-            AI agents investigate patient records, retrieve clinical evidence,
-            validate payer policies, and prepare explainable prior authorization
-            packets—keeping clinicians in complete control.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="flex gap-5 mt-10"
-          >
-            <button className="bg-blue-600 hover:bg-blue-500 px-7 py-4 rounded-xl flex items-center gap-2 font-semibold">
-              Explore Demo
-              <ArrowRight size={18} />
-            </button>
-            <button className="border border-slate-700 hover:border-blue-500 px-7 py-4 rounded-xl">
-              View Architecture
-            </button>
-          </motion.div>
-          <div className="grid grid-cols-3 gap-8 mt-16">
-            <div>
-              <h3 className="text-4xl font-bold text-blue-400">80%</h3>
-
-              <p className="text-slate-400 mt-2">Faster Reviews</p>
-            </div>
-
-            <div>
-              <h3 className="text-4xl font-bold text-blue-400">100%</h3>
-              <p className="text-slate-400 mt-2">Human Oversight</p>
-            </div>
-            <div>
-              <h3 className="text-4xl font-bold text-blue-400">5</h3>
-              <p className="text-slate-400 mt-2">Max Investigation Steps</p>
-            </div>
-          </div>
-        </div>
-        <Workflow />
+      <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-8 leading-tight">
+        Automate Prior Authorization <br />
+        <span className="text-blue-600 dark:text-blue-500">
+          Without Compromising Safety.
+        </span>
+      </h1>
+      <p className="text-xl text-slate-600 dark:text-slate-300 mb-10 max-w-3xl mx-auto leading-relaxed">
+        Stop manually digging through unstructured EHRs. Our bounded AI
+        orchestrator reads charts, checks payer policies, and builds verified
+        evidence packets for your medical directors in minutes.
+      </p>
+      <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+        <button className="bg-blue-600 dark:bg-blue-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-700 dark:hover:bg-blue-500 transition flex items-center shadow-lg shadow-blue-600/20 dark:shadow-blue-900/20">
+          See the Agent in Action <ArrowRight className="ml-2" size={20} />
+        </button>
+        <button className="bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+          Read the Whitepaper
+        </button>
       </div>
-    </section>
+    </header>
   );
 }

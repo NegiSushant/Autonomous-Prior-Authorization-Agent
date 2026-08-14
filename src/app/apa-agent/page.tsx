@@ -31,8 +31,10 @@ export default function Home() {
   }
 
   return (
-    <main className="mx-auto max-w-7xl p-8 grow w-full">
-      <h1 className="mb-8 text-3xl font-bold">Prior Authorization Dashboard</h1>
+    <main className="mx-auto max-w-7xl p-8 grow w-full transition-colors duration-200">
+      <h1 className="mb-8 text-3xl font-bold text-slate-900 dark:text-white">
+        Prior Authorization Dashboard
+      </h1>
       <PatientSelector patientId={patientId} onChange={setPatientId} />
       <InvestigationRunner loading={loading} onRun={runInvestigation} />
       {result && (

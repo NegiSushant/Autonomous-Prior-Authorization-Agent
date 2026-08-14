@@ -85,16 +85,14 @@ export default function SignUp() {
   };
 
   return (
-    // <div className="min-h-screen bg-black flex flex-col justify-center px-6 py-12 lg:px-8">
-    // bg-white dark:bg-slate-900 min-h-screen text-slate-900 dark:text-white
-    <div className="bg-white dark:bg-slate-900 min-h-screen text-slate-900 dark:text-white flex flex-col justify-center px-6 py-12 lg:px-8">
+    <div className="bg-white dark:bg-slate-900 min-h-screen text-slate-900 dark:text-white flex flex-col justify-center px-6 py-12 lg:px-8 transition-colors duration-200">
       {/* Heading */}
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">
+        <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900 dark:text-white">
           Create your account
         </h2>
 
-        <p className="mt-2 text-center text-sm text-gray-400">
+        <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
           Get started with your account
         </p>
       </div>
@@ -104,8 +102,10 @@ export default function SignUp() {
         <form onSubmit={handleSignUp} className="space-y-6">
           {/* Error */}
           {error && (
-            <div className="rounded-md border border-red-500/20 bg-red-500/10 px-4 py-3">
-              <p className="text-sm text-red-400 text-center">{error}</p>
+            <div className="rounded-md border border-red-200 bg-red-50 dark:border-red-500/20 dark:bg-red-500/10 px-4 py-3 transition-colors">
+              <p className="text-sm text-red-600 dark:text-red-400 text-center">
+                {error}
+              </p>
             </div>
           )}
 
@@ -113,7 +113,7 @@ export default function SignUp() {
           <div>
             <label
               htmlFor="name"
-              className="block text-sm/6 font-medium text-gray-100"
+              className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
             >
               Name
             </label>
@@ -126,7 +126,7 @@ export default function SignUp() {
                 required
                 autoComplete="name"
                 placeholder="John Doe"
-                className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                className="block w-full rounded-md px-3 py-1.5 text-base sm:text-sm/6 outline-1 -outline-offset-1 focus:outline-2 focus:-outline-offset-2 transition-colors bg-white text-gray-900 outline-gray-300 placeholder:text-gray-400 focus:outline-indigo-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500 shadow-sm dark:shadow-none"
               />
             </div>
           </div>
@@ -135,7 +135,7 @@ export default function SignUp() {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm/6 font-medium text-gray-100"
+              className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
             >
               Email address
             </label>
@@ -148,7 +148,7 @@ export default function SignUp() {
                 required
                 autoComplete="email"
                 placeholder="you@example.com"
-                className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                className="block w-full rounded-md px-3 py-1.5 text-base sm:text-sm/6 outline-1 -outline-offset-1 focus:outline-2 focus:-outline-offset-2 transition-colors bg-white text-gray-900 outline-gray-300 placeholder:text-gray-400 focus:outline-indigo-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500 shadow-sm dark:shadow-none"
               />
             </div>
           </div>
@@ -157,7 +157,7 @@ export default function SignUp() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm/6 font-medium text-gray-100"
+              className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
             >
               Password
             </label>
@@ -170,7 +170,7 @@ export default function SignUp() {
                 required
                 autoComplete="new-password"
                 placeholder="••••••••"
-                className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                className="block w-full rounded-md px-3 py-1.5 text-base sm:text-sm/6 outline-1 -outline-offset-1 focus:outline-2 focus:-outline-offset-2 transition-colors bg-white text-gray-900 outline-gray-300 placeholder:text-gray-400 focus:outline-indigo-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500 shadow-sm dark:shadow-none"
               />
             </div>
           </div>
@@ -179,7 +179,7 @@ export default function SignUp() {
           <div>
             <label
               htmlFor="confirmPassword"
-              className="block text-sm/6 font-medium text-gray-100"
+              className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
             >
               Confirm password
             </label>
@@ -192,7 +192,7 @@ export default function SignUp() {
                 required
                 autoComplete="new-password"
                 placeholder="••••••••"
-                className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                className="block w-full rounded-md px-3 py-1.5 text-base sm:text-sm/6 outline-1 -outline-offset-1 focus:outline-2 focus:-outline-offset-2 transition-colors bg-white text-gray-900 outline-gray-300 placeholder:text-gray-400 focus:outline-indigo-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500 shadow-sm dark:shadow-none"
               />
             </div>
           </div>
@@ -202,7 +202,7 @@ export default function SignUp() {
             <button
               type="submit"
               disabled={loading || githubLoading}
-              className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-500 disabled:cursor-not-allowed disabled:opacity-60 transition-colors"
             >
               {loading ? "Creating account..." : "Create account"}
             </button>
@@ -212,11 +212,11 @@ export default function SignUp() {
         {/* Divider */}
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/10" />
+            <div className="w-full border-t border-gray-300 dark:border-white/10 transition-colors" />
           </div>
 
           <div className="relative flex justify-center text-sm">
-            <span className="bg-black px-3 text-gray-400">
+            <span className="bg-white dark:bg-slate-900 px-3 text-gray-500 dark:text-gray-400 transition-colors">
               Or continue with
             </span>
           </div>
@@ -227,7 +227,7 @@ export default function SignUp() {
           type="button"
           onClick={handleGithubSignUp}
           disabled={loading || githubLoading}
-          className="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-3 rounded-md px-3 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:ring-0 dark:hover:bg-white/20 shadow-sm dark:shadow-none"
         >
           {githubLoading ? (
             "Connecting to GitHub..."
@@ -245,12 +245,12 @@ export default function SignUp() {
         </button>
 
         {/* Sign In */}
-        <p className="mt-8 text-center text-sm text-gray-400">
+        <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
           Already have an account?{" "}
           <button
             type="button"
             onClick={() => router.push("/signin")}
-            className="font-semibold text-indigo-400 hover:text-indigo-300"
+            className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors"
           >
             Sign in
           </button>

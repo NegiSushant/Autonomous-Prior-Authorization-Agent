@@ -12,12 +12,9 @@ export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const { status } = useSession();
-
-  // Theme state setup
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // Prevent hydration mismatch by mounting UI only after theme is known
   useEffect(() => {
     const timer = setTimeout(() => {
       setMounted(true);
@@ -44,7 +41,6 @@ export default function Navbar() {
           size={32}
           className="transition-transform duration-200 group-hover:scale-110"
         />
-        {/* Added dark:text-white and dark:group-hover:text-blue-500 */}
         <Link
           href="/"
           className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-500 transition-colors"
@@ -54,7 +50,6 @@ export default function Navbar() {
       </div>
 
       {/* Center Links */}
-      {/* Added dark:text-slate-300 */}
       <div className="space-x-2 hidden md:flex items-center text-sm font-medium text-slate-600 dark:text-slate-300">
         <a
           href="architecture"
@@ -89,7 +84,6 @@ export default function Navbar() {
           </button>
         )}
 
-        {/* Added dark:bg-slate-800 */}
         {status === "loading" ? (
           <div className="h-10 w-24 bg-slate-100 dark:bg-slate-800 animate-pulse rounded-lg" />
         ) : !isLoggedIn ? (
@@ -102,7 +96,6 @@ export default function Navbar() {
                 Request Demo
               </button>
             )}
-            {/* Added dark:bg-slate-800, dark:text-slate-200, dark:border-slate-700, etc. */}
             <button
               onClick={() => router.push("/signin")}
               className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-lg text-sm font-semibold border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-all duration-200 active:scale-95"
