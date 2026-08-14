@@ -84,25 +84,26 @@ export default function Navbar() {
           </button>
         )}
 
+        {/* Primary Action Button: Extracted from the Auth ternary so it always shows (except on /apa-agent) */}
+        {pathname !== "/apa-agent" && (
+          <button
+            onClick={handleRequestDemo}
+            className="bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-sm hover:bg-blue-700 hover:shadow-md transition-all duration-200 active:scale-95 ring-1 ring-blue-600/50"
+          >
+            {isLoggedIn ? "Request Demo" : "Request Demo"}
+          </button>
+        )}
+
+        {/* Authentication State (Sign In vs Profile Dropdown) */}
         {status === "loading" ? (
           <div className="h-10 w-24 bg-slate-100 dark:bg-slate-800 animate-pulse rounded-lg" />
         ) : !isLoggedIn ? (
-          <>
-            {pathname !== "/apa-agent" && (
-              <button
-                onClick={handleRequestDemo}
-                className="bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-sm hover:bg-blue-700 hover:shadow-md transition-all duration-200 active:scale-95 ring-1 ring-blue-600/50"
-              >
-                Request Demo
-              </button>
-            )}
-            <button
-              onClick={() => router.push("/signin")}
-              className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-lg text-sm font-semibold border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-all duration-200 active:scale-95"
-            >
-              Sign In
-            </button>
-          </>
+          <button
+            onClick={() => router.push("/signin")}
+            className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-lg text-sm font-semibold border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-all duration-200 active:scale-95"
+          >
+            Sign In
+          </button>
         ) : (
           <ProfileDropdown />
         )}
