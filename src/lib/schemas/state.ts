@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { PriorAuthRequestSchema } from "./prior-auth";
 import { ClinicalEvidenceSchema } from "./evidence";
+import { FinalBriefing } from "./briefing";
 
 export const AgentStatusSchema = z.enum([
   "in_progress",
@@ -18,4 +19,5 @@ export interface PAAgentState {
   iterationCount: number;
   status: z.infer<typeof AgentStatusSchema>;
   messages: BaseMessage[];
+  finalReport?: FinalBriefing;
 }

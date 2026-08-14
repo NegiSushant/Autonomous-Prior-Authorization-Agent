@@ -24,6 +24,7 @@ export default function Home() {
         }),
       });
       const data = await response.json();
+      console.log(data);
       setResult(data.data);
     } finally {
       setLoading(false);
@@ -45,6 +46,15 @@ export default function Home() {
           evidence={result.gatheredEvidence}
           criteria={result.criteria}
         />
+        // <RecommendationPanel
+        //   recommendation={result.recommendation}
+        //   rationale={result.rationale}
+        //   finalDetermination={result.finalDetermination}
+        //   status={result.status}
+        //   trace={result.executionTrace}
+        //   evidence={result.gatheredEvidence}
+        //   criteria={result.criteria}
+        // />
       )}
     </main>
   );

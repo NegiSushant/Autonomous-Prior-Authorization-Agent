@@ -40,33 +40,24 @@ export default function RecommendationPanel({
   const [showTrace, setShowTrace] = useState(false);
   const [showEvidence, setShowEvidence] = useState(false);
 
-  /*
-   * Stores human overrides locally in the UI.
-   *
-   * Example:
-   *
-   * {
-   *   "conservative-therapy": {
-   *      satisfied: true,
-   *      justification: "Reviewed additional EHR documentation.",
-   *      overridden: true
-   *   }
-   * }
-   */
   const [overrides, setOverrides] = useState<Record<string, OverrideState>>({});
   const [activeOverride, setActiveOverride] = useState<string | null>(null);
   const [justification, setJustification] = useState("");
 
-  // Recommendation
+  const finalRecommendation = trace.find(
+    (step) => step.type === "reasoner" && step.title === "Final Recommendation",
+  );
+
+  // Recommendation Colors
   const isApproved = recommendation.toLowerCase().includes("approved");
   const isManualReview = recommendation.toLowerCase().includes("manual review");
   const recommendationColor = isApproved
-    ? "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800/50"
+    ? "bg-green-50 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800/50"
     : isManualReview
-      ? "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800/50"
-      : "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50";
+      ? "bg-yellow-50 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800/50"
+      : "bg-red-50 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800/50";
 
-  // Status
+  // Status Colors
   const statusColor =
     status === "completed"
       ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
@@ -140,19 +131,8 @@ export default function RecommendationPanel({
         </div>
       </div>
 
-      {/* RECOMMENDATION + STATUS */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <div>
-          <p className="mb-2 text-sm font-medium text-gray-500 dark:text-slate-400">
-            Recommendation
-          </p>
-          <span
-            className={`inline-flex rounded-full border px-4 py-2 text-sm font-semibold ${recommendationColor}`}
-          >
-            {recommendation}
-          </span>
-        </div>
-
+      {/* RECOMMENDATION BADGES */}
+      <div className="mb-6 flex flex-wrap items-start gap-8">
         <div>
           <p className="mb-2 text-sm font-medium text-gray-500 dark:text-slate-400">
             Investigation Status
@@ -163,7 +143,35 @@ export default function RecommendationPanel({
             {status}
           </span>
         </div>
+
+        <div>
+          <p className="mb-2 text-sm font-medium text-gray-500 dark:text-slate-400">
+            Outcome
+          </p>
+          <span
+            className={`inline-flex rounded-full border px-4 py-2 text-sm font-semibold ${recommendationColor}`}
+          >
+            {recommendation}
+          </span>
+        </div>
       </div>
+
+      {/* DETAILED RATIONALE BOX */}
+      {finalRecommendation?.content && (
+        <div className="mb-8">
+          <p className="mb-2 text-sm font-medium text-gray-500 dark:text-slate-400">
+            Recommendation Details
+          </p>
+          <div
+            className={`rounded-xl border p-5 text-sm leading-relaxed shadow-inner ${recommendationColor}`}
+          >
+            {/* whitespace-pre-wrap ensures natural line breaks from the AI are respected */}
+            <p className="whitespace-pre-wrap font-medium">
+              {finalRecommendation.content}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* POLICY CRITERIA */}
       <div className="mt-10">

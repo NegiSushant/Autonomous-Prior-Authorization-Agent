@@ -1,6 +1,7 @@
 import { BaseMessage } from "@langchain/core/messages";
 import { Annotation } from "@langchain/langgraph";
 import { PAAgentState } from "../schemas/state";
+import { FinalBriefing } from "../schemas/briefing";
 
 export const PAStateAnnotation = Annotation.Root({
   patientDetails: Annotation<PAAgentState["patientDetails"]>({
@@ -35,5 +36,10 @@ export const PAStateAnnotation = Annotation.Root({
   messages: Annotation<BaseMessage[]>({
     reducer: (state, update) => [...state, ...update],
     default: () => [],
+  }),
+
+  finalReport: Annotation<FinalBriefing | undefined>({
+    reducer: (_, update) => update,
+    default: () => undefined,
   }),
 });

@@ -6,6 +6,7 @@ export function createInitialState(request: PriorAuthRequest): PAAgentState {
     patientDetails: request,
     policyRules: [],
     gatheredEvidence: [],
+    conflicts: [],
     iterationCount: 0,
     status: "in_progress",
     messages: [],

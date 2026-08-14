@@ -8,7 +8,8 @@ import {
 
 export function mapAgentResponse(state: PAAgentState): PriorAuthResponse {
   const executionTrace: ExecutionStep[] = [];
-  let recommendation = "Unknown";
+  // let recommendation = "Unknown";
+  const recommendation = state.finalReport?.recommendationStatus ?? "Unknown";
   // BUILD EXECUTION TRACE
   for (const message of state.messages) {
     // AI MESSAGE
@@ -35,7 +36,7 @@ export function mapAgentResponse(state: PAAgentState): PriorAuthResponse {
       // Agent produced final response
       else {
         const content = message.text || "";
-        recommendation = content;
+        // recommendation = content;
         executionTrace.push({
           type: "reasoner",
           title: "Final Recommendation",
