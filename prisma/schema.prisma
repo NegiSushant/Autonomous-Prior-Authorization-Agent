@@ -20,4 +20,23 @@ model User {
   email               String  @unique
   password            String
   name                String?
+  reviews  PriorAuthReview[]
+}
+
+
+model PriorAuthReview {
+  id                String   @id @default(cuid())
+  patientId         String
+  agentRecommendation String
+  agentStatus       String
+  finalDecision     String
+  reviewerNote      String?
+  agentResultJson   Json
+  overridesJson     Json
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  reviewerId        Int?
+  reviewer          User?    @relation(fields: [reviewerId], references: [id])
+  @@index([patientId])
+  @@index([createdAt])
 }

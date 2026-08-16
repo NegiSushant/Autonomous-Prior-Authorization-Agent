@@ -14,9 +14,11 @@ import {
   EvidenceItem,
   ExecutionStep,
   CriterionEvaluation,
+  PriorAuthResponse,
 } from "@/types/prior-auth-response";
 
 interface RecommendationPanelProps {
+  result: PriorAuthResponse;
   recommendation: string;
   status: string;
   trace: ExecutionStep[];
@@ -25,12 +27,14 @@ interface RecommendationPanelProps {
 }
 
 interface OverrideState {
+  originalSatisfied: boolean;
   satisfied: boolean;
   justification: string;
   overridden: boolean;
 }
 
 export default function RecommendationPanel({
+  result,
   recommendation,
   status,
   trace,
@@ -44,9 +48,13 @@ export default function RecommendationPanel({
   const [activeOverride, setActiveOverride] = useState<string | null>(null);
   const [justification, setJustification] = useState("");
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+  
   const finalRecommendation = trace.find(
     (step) => step.type === "reasoner" && step.title === "Final Recommendation",
   );
+
 
   // Recommendation Colors
   const isApproved = recommendation.toLowerCase().includes("approved");
@@ -95,6 +103,7 @@ export default function RecommendationPanel({
     setOverrides((current) => ({
       ...current,
       [criterion.id]: {
+        originalSatisfied: criterion.satisfied,
         satisfied: true,
         justification: justification.trim(),
         overridden: true,
@@ -102,6 +111,49 @@ export default function RecommendationPanel({
     }));
     setActiveOverride(null);
     setJustification("");
+  }
+
+  async function submitReview(
+    decision: "APPROVED" | "DENIED" | "REQUEST_ADDITIONAL_INFO",
+  ) {
+    if (!result) return; // you will need to pass the full result down or keep it in parent
+
+    setIsSubmitting(true);
+    setSubmitMessage(null);
+
+    const overrideList = Object.entries(overrides).map(([criteriaId, o]) => ({
+      criteriaId,
+      originalSatisfied: o.originalSatisfied,
+      overriddenSatisfied: o.satisfied,
+      justification: o.justification,
+    }));
+
+    try {
+      const res = await fetch("/api/prior-auth/review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          agentResult: result, // full PriorAuthResponse
+          overrides: overrideList,
+          decision,
+          // reviewerNote: optional free text if add a note field
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.message || "Failed to save review");
+      }
+
+      setSubmitMessage(`Review saved (${decision}). ID: ${data.data.reviewId}`);
+    } catch (err) {
+      setSubmitMessage(
+        err instanceof Error ? err.message : "Failed to save review",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -335,13 +387,17 @@ export default function RecommendationPanel({
         <div className="flex flex-wrap gap-3">
           <button
             type="button"
+            disabled={isSubmitting}
+            onClick={() => submitReview("APPROVED")}
             className="rounded-lg bg-green-600 px-5 py-2.5 text-white transition hover:bg-green-700 dark:hover:bg-green-500 shadow-sm"
           >
-            Approve
+            {isSubmitting ? "Saving…" : "Approve"}
           </button>
 
           <button
             type="button"
+            disabled={isSubmitting}
+            onClick={() => submitReview("DENIED")}
             className="rounded-lg bg-red-600 px-5 py-2.5 text-white transition hover:bg-red-700 dark:hover:bg-red-500 shadow-sm"
           >
             Deny
@@ -349,11 +405,18 @@ export default function RecommendationPanel({
 
           <button
             type="button"
+            disabled={isSubmitting}
+            onClick={() => submitReview("REQUEST_ADDITIONAL_INFO")}
             className="rounded-lg bg-amber-500 px-5 py-2.5 text-white transition hover:bg-amber-600 dark:hover:bg-amber-400 shadow-sm"
           >
             Request Additional Information
           </button>
         </div>
+        {submitMessage && (
+          <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">
+            {submitMessage}
+          </p>
+        )}
       </div>
 
       {/* DRAWERS */}

@@ -5,14 +5,23 @@ import PatientSelector from "@/components/dashboard/PatientSelector";
 import InvestigationRunner from "@/components/dashboard/InvestigationRunner";
 import RecommendationPanel from "@/components/dashboard/RecommendationPanel";
 import { PriorAuthResponse } from "@/types/prior-auth-response";
+import ReviewHistory from "@/components/dashboard/ReviewHistory";
 
 export default function Home() {
   const [patientId, setPatientId] = useState("PAT001");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<PriorAuthResponse | null>(null);
+  const [runId, setRunId] = useState(0);
+
+  function handlePatientChange(newId: string) {
+    setPatientId(newId);
+    setResult(null);
+  }
 
   async function runInvestigation() {
     setLoading(true);
+    setResult(null);
+    setRunId((id) => id + 1);
     try {
       const response = await fetch("/api/prior-auth", {
         method: "POST",
@@ -36,26 +45,23 @@ export default function Home() {
       <h1 className="mb-8 text-3xl font-bold text-slate-900 dark:text-white">
         Prior Authorization Dashboard
       </h1>
-      <PatientSelector patientId={patientId} onChange={setPatientId} />
+      <PatientSelector patientId={patientId} onChange={handlePatientChange} />
       <InvestigationRunner loading={loading} onRun={runInvestigation} />
       {result && (
         <RecommendationPanel
+          key={`${result.patientId}-${runId}`}
+          result={result}
           recommendation={result.recommendation}
           status={result.status}
           trace={result.executionTrace}
           evidence={result.gatheredEvidence}
           criteria={result.criteria}
         />
-        // <RecommendationPanel
-        //   recommendation={result.recommendation}
-        //   rationale={result.rationale}
-        //   finalDetermination={result.finalDetermination}
-        //   status={result.status}
-        //   trace={result.executionTrace}
-        //   evidence={result.gatheredEvidence}
-        //   criteria={result.criteria}
-        // />
       )}
+      {/**See the Human override history */}
+      <div className="mt-10">
+        <ReviewHistory patientId={patientId} />
+      </div>
     </main>
   );
 }
