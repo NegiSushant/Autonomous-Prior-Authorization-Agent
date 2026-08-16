@@ -1,0 +1,31 @@
+AETNA CLINICAL POLICY BULLETIN
+Total Knee Replacement / Arthroplasty
+Policy Number: 0000 (Sample)
+CPT: 27447
+
+MEDICAL NECESSITY
+
+Aetna considers total knee arthroplasty (TKA) medically necessary for members with osteoarthritis or other advanced joint disease of the knee when ALL of the following criteria are met:
+
+1. Radiographic evidence of moderate to severe osteoarthritis (Kellgren-Lawrence grade 3 or 4) or equivalent findings on MRI/CT showing joint space narrowing, osteophytes, subchondral sclerosis or cysts, or bone-on-bone articulation.
+
+2. Documented functional disability due to knee pain for at least 3 months that interferes with activities of daily living (e.g., walking, climbing stairs, rising from chair).
+
+3. Failure of at least 3 months of conservative non-operative management including:
+   - Physical therapy (minimum 6 sessions or documented completion of a supervised program)
+   - Pharmacologic therapy (NSAIDs, acetaminophen, or other analgesics) unless contraindicated
+   - At least one course of intra-articular corticosteroid injection (unless contraindicated or refused)
+   - Activity modification and/or weight loss counseling for overweight members
+
+4. No contraindications to surgery (active infection, severe medical comorbidities that make surgery high risk without optimization).
+
+SPECIAL NOTES
+- Bilateral simultaneous TKA may be considered when both knees meet criteria and the member is optimized for surgery.
+- Revision TKA requires documentation of implant failure, loosening, infection, or other mechanical complication.
+- Prior authorization is required for elective TKA performed in outpatient or inpatient settings.
+
+REQUIRED DOCUMENTATION
+- Imaging reports (X-ray preferred; MRI if recent)
+- Physical therapy notes with dates and outcomes
+- Medication trial history
+- Office notes documenting pain and functional limitations

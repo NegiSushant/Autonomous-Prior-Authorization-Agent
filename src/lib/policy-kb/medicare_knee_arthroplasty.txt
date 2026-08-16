@@ -1,0 +1,59 @@
+MEDICARE PRIOR AUTHORIZATION GUIDELINES
+Total Knee Arthroplasty (TKA) / Total Knee Replacement
+CPT Codes: 27447, 27486, 27487
+LCD Reference: L36575 / L40232 (Total Joint Arthroplasty)
+
+COVERAGE INDICATIONS AND MEDICAL NECESSITY
+
+Primary total knee arthroplasty is considered reasonable and medically necessary if ALL of the following criteria have been met:
+
+1. Advanced joint disease of the knee evidenced by conventional radiography, MRI, or CT demonstrating one or more of the following:
+   - Subchondral cysts
+   - Subchondral sclerosis
+   - Periarticular osteophytes
+   - Joint subluxation
+   - Joint space narrowing
+   - Avascular necrosis
+   - Bone-on-bone articulations
+
+2. Pain with functional disability at the knee that interferes with activities of daily living (ADLs), documented as:
+   - Pain increased with initiation of activities
+   - Pain that increases with weight bearing
+   - Pain precluding sleep
+   - Inability to perform household chores or prolonged standing
+
+3. History of a reasonable attempt (typically 3 months or more) at conservative therapy appropriate for the patient in the current episode of care, including documented trial of:
+   - NSAIDs or contraindication to such therapy
+   - Supervised physical therapy (at least 3 sessions documented)
+   - Activity modification
+   - Weight management counseling when BMI > 30
+   - Intra-articular corticosteroid injections (when appropriate)
+
+4. The procedure does not exceed the medical need and is at least as beneficial as existing alternatives.
+
+5. Documentation must clearly support the diagnostic criteria and clinical findings. Progress notes with only conclusive statements are insufficient.
+
+REVISION / REPLACEMENT TKA
+
+Revision or replacement TKA is medically necessary when documentation shows cause of failure of the primary procedure such as:
+- Infection
+- Aseptic loosening
+- Periprosthetic fracture
+- Instability
+- Moderate to severe pain and loss of function
+- Polyethylene wear
+- Restriction of motion / arthrofibrosis
+- Extensor mechanism insufficiency
+- Implant failure
+- Allergy to implant components
+
+DOCUMENTATION REQUIREMENTS
+- Radiographic or advanced imaging reports
+- Detailed history of conservative treatments tried and failed, with dates and duration
+- Physical exam findings including range of motion, strength, gait
+- Functional assessment scores if available
+- Operative notes for revision cases
+
+EXCLUSIONS
+- Unicompartmental (partial) knee replacement is not covered under the same criteria as total knee arthroplasty in some LCDs.
+- Procedures performed solely for cosmetic reasons or without medical necessity documentation.

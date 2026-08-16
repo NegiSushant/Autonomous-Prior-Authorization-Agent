@@ -40,3 +40,21 @@ model PriorAuthReview {
   @@index([patientId])
   @@index([createdAt])
 }
+
+
+model PolicyChunk {
+  id          BigInt                 @id @default(autoincrement())
+  content     String
+  insurance   String?
+  procedure   String?
+  cptCodes    String?                @map("cpt_codes")
+  sourceFile  String?                @map("source_file")
+  metadata    Json?
+  embedding   Unsupported("vector")?
+
+  createdAt   DateTime               @default(now()) @map("created_at")
+
+  @@map("policy_chunks")
+  @@index([insurance])
+  @@index([procedure])
+}
