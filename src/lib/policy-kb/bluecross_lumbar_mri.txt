@@ -1,0 +1,50 @@
+BLUE CROSS BLUE SHIELD - PRIOR AUTHORIZATION CLINICAL CRITERIA
+Outpatient Lumbar Spine Magnetic Resonance Imaging (MRI)
+CPT Codes: 72148, 72149, 72158
+
+MEDICAL NECESSITY CRITERIA
+
+Coverage for outpatient lumbar spine MRI is provided for members who meet the medical necessity criteria below. Prior authorization is required.
+
+ALL requests for MRIs MUST be ordered by a M.D. or D.O. assuming responsibility for management of the patient.
+
+Low Back pain complicated by any one of the following:
+
+1. Persistent low back pain and/or radicular pain:
+   - Beyond 6 weeks in duration; AND
+   - In the last 6 months, symptoms have failed to improve despite 6 weeks of documented evidence-based conservative treatment that has included ALL of the following:
+     a) Active participation in a physical therapy program OR active participation in Chiropractic directed care, either of which must include at least 3 visits and/or a discharge summary; AND
+     b) Use of prescription or over-the-counter analgesics / NSAIDs (unless contraindicated); AND
+     c) Activity modification / home exercise program.
+
+2. Objective neurological deficits as indicated by ANY of the following:
+   - Urinary urgency, frequency, retention, or overflow incontinence
+   - Fecal incontinence
+   - Spasticity
+   - Sensory loss that is severe, persistent, or progressive
+   - Objective muscle weakness of ≤ 3/5
+   - Asymmetric hypo or hyperreflexia
+   - Clonus
+   - Pathologic reflexes (e.g., Babinski, Chaddock, Oppenheim, grasp)
+   - Gait abnormality (e.g., ataxic)
+   - Cauda equina syndrome
+   - Saddle anesthesia
+
+3. Documentation of a concern for/suspected malignancy with localized lumbar pain and ANY of the following:
+   - Personal history or concurrent diagnosis of cancer, especially breast, lung, prostate, lymphoma, sarcoma, or kidney
+   - Unexplained weight loss
+   - Positive bone scan or suspicious lesion found on other imaging
+
+4. Red flag conditions:
+   - Major trauma
+   - Minor trauma in a potentially osteoporotic patient
+   - History of cancer
+   - Fever / chills
+   - Recent bacterial infection
+   - IV drug abuse
+   - Immune suppression
+   - Pain that worsens when supine or at night
+
+For non-red flag conditions, MRI may be appropriate after 1 month of symptoms and failure of conservative treatment.
+
+A lumbar MRI used to evaluate uncomplicated degenerative disc disease or herniated nucleus pulposus is not considered medically necessary when a surgical intervention or other aggressive treatment is not under consideration.
