@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "../components/Navbar";
-import Footers from "../components/Footers";
 import AuthProvider from "@/components/AuthProvider";
 import ThemeProvider from "@/components/ThemeProvider";
 
@@ -36,9 +34,9 @@ export default function RootLayout({
         <body className="min-h-full flex flex-col">
           <AuthProvider>
             <ThemeProvider>
-              <Navbar />
+              {/* <Navbar /> */}
               {children}
-              <Footers />
+              {/* <Footers /> */}
             </ThemeProvider>
           </AuthProvider>
         </body>
