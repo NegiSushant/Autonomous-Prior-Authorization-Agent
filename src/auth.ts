@@ -5,6 +5,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import prismaClient from "./lib/prisma";
+import { UserRole } from "./generated/prisma/enums";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prismaClient),
@@ -53,6 +54,7 @@ export const authOptions: NextAuthOptions = {
           id: user.id.toString(),
           email: user.email,
           name: user.name,
+          role: user.role,
         };
       },
     }),
@@ -63,12 +65,13 @@ export const authOptions: NextAuthOptions = {
       if (user && user.email) {
         token.id = user.id;
         token.email = user.email;
+        token.role = user.role;
       }
       if (!process.env.JWT_ACCESS_SECRET) {
         throw new Error("JWT_ACCESS_SECRET is ABSOLUTELY REQUIRED and not set");
       }
       token.accessToken = jwt.sign(
-        { id: token.id, email: token.email },
+        { id: token.id, email: token.email, role: token.role },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "7d" },
       );
@@ -79,6 +82,7 @@ export const authOptions: NextAuthOptions = {
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
+        session.user.role = token.role as UserRole;
         session.accessToken = token.accessToken as string;
       }
       return session;

@@ -37,6 +37,7 @@ export default function ProfileDropdown() {
   const userName = session?.user?.name || "User Account";
   const userEmail = session?.user?.email || "user@authguardian.ai";
   const userInitials = userName.substring(0, 2).toUpperCase();
+  const isAdmin = session?.user?.role === "ADMIN";
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -85,7 +86,24 @@ export default function ProfileDropdown() {
               <span>My Profile</span>
             </button>
 
-            <button
+            {/* Admin Panel – only visible for ADMIN */}
+            {isAdmin && (
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  router.push("/admin/clinical-data");
+                }}
+                className="w-full flex items-center space-x-3 px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              >
+                <ShieldAlert
+                  size={16}
+                  className="text-slate-500 dark:text-slate-400"
+                />
+                <span>Admin Panel</span>
+              </button>
+            )}
+
+            {/* <button
               onClick={() => {
                 setIsOpen(false);
                 // router.push("/apa-agent");
@@ -97,7 +115,7 @@ export default function ProfileDropdown() {
                 className="text-slate-500 dark:text-slate-400"
               />
               <span>Admin Panel</span>
-            </button>
+            </button> */}
 
             <button
               onClick={() => {
