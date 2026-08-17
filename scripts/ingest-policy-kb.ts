@@ -9,7 +9,8 @@ export const openai = new AzureOpenAIEmbeddings({
   azureOpenAIEndpoint: process.env.OPENAI_ENDPOINT,
   azureOpenAIApiVersion: process.env.OPENAI_API_VERSION,
   azureOpenAIApiKey: process.env.OPENAI_API_KEY,
-  azureOpenAIApiDeploymentName: process.env.OPENAI_DEPLOYEMENTNAME,
+  azureOpenAIApiDeploymentName: process.env.OPENAI_EMBEDDING_DEPLOYEMENTNAME,
+  azureOpenAIApiInstanceName: process.env.OPENAI_INSTANCE_NAME,
   verbose: true,
 });
 

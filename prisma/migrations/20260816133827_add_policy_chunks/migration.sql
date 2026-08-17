@@ -1,4 +1,6 @@
 -- CreateTable
+CREATE EXTENSION IF NOT EXISTS vector;
+
 CREATE TABLE "policy_chunks" (
     "id" BIGSERIAL NOT NULL,
     "content" TEXT NOT NULL,

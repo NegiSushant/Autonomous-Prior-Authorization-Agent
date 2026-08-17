@@ -208,7 +208,7 @@ function formatFailureGuidance(failure: FailedToolCall): string {
         prefix,
         searchDescription ? `Search attempted: ${searchDescription}` : "",
         "",
-        "Do NOT conclude that conservative therapy was not completed yet.",
+        "Do NOT conclude a policy criterion is unmet solely because this search was empty.",
         "",
         "Try a concise clinical search term instead of a long combined query.",
         "",
@@ -220,8 +220,11 @@ function formatFailureGuidance(failure: FailedToolCall): string {
         "- acupuncture",
         "- home exercise",
         "- therapeutic exercise",
+        "- ordered by",
+        "- physician order",
         "",
-        "Only consider evidence relevant to the diagnosis and body part associated with the prior authorization request.",
+        "Only consider evidence relevant to the diagnosis and body part for this prior authorization.",
+        "Evaluate findings only against the policy rules provided in the agent state.",
       ]
         .filter(Boolean)
         .join("\n");
@@ -231,14 +234,14 @@ function formatFailureGuidance(failure: FailedToolCall): string {
         prefix,
         searchDescription ? `Search attempted: ${searchDescription}` : "",
         "",
-        "If clinically relevant, consider another medication category:",
+        "If clinically relevant, try another medication category:",
         "- NSAID",
         "- Pain Medication",
         "- Anti-inflammatory",
         "- Analgesic",
         "- Muscle Relaxant",
         "",
-        "Medication history alone does not prove completion of 6 weeks of conservative therapy.",
+        "Medication history alone does not prove completion or failure of conservative therapy under the retrieved policy rules.",
       ]
         .filter(Boolean)
         .join("\n");
@@ -248,16 +251,72 @@ function formatFailureGuidance(failure: FailedToolCall): string {
         prefix,
         searchDescription ? `Search attempted: ${searchDescription}` : "",
         "",
-        "For the lumbar imaging criterion, consider:",
+        "If the retrieved policy requires prior imaging, try:",
         "- Lumbar Spine",
         "- Lumbar X-ray",
-        "- Lumbar Spine X-ray",
         "- Lumbar radiograph",
+        "- prior imaging",
         "",
-        "Do not treat imaging from another body part as qualifying evidence for the lumbar MRI authorization.",
+        "Do not treat imaging of an unrelated body part as qualifying evidence.",
+        "Only apply imaging findings to criteria present in the retrieved policy rules.",
       ]
         .filter(Boolean)
         .join("\n");
+    // case "search_ehr_notes":
+    //   return [
+    //     prefix,
+    //     searchDescription ? `Search attempted: ${searchDescription}` : "",
+    //     "",
+    //     "Do NOT conclude that conservative therapy was not completed yet.",
+    //     "",
+    //     "Try a concise clinical search term instead of a long combined query.",
+    //     "",
+    //     "Suggested EHR search terms:",
+    //     "- physical therapy",
+    //     "- PT",
+    //     "- physiotherapy",
+    //     "- chiropractic",
+    //     "- acupuncture",
+    //     "- home exercise",
+    //     "- therapeutic exercise",
+    //     "",
+    //     "Only consider evidence relevant to the diagnosis and body part associated with the prior authorization request.",
+    //   ]
+    //     .filter(Boolean)
+    //     .join("\n");
+
+    // case "search_pharmacy_records":
+    //   return [
+    //     prefix,
+    //     searchDescription ? `Search attempted: ${searchDescription}` : "",
+    //     "",
+    //     "If clinically relevant, consider another medication category:",
+    //     "- NSAID",
+    //     "- Pain Medication",
+    //     "- Anti-inflammatory",
+    //     "- Analgesic",
+    //     "- Muscle Relaxant",
+    //     "",
+    //     "Medication history alone does not prove completion of 6 weeks of conservative therapy.",
+    //   ]
+    //     .filter(Boolean)
+    //     .join("\n");
+
+    // case "search_imaging_history":
+    //   return [
+    //     prefix,
+    //     searchDescription ? `Search attempted: ${searchDescription}` : "",
+    //     "",
+    //     "For the lumbar imaging criterion, consider:",
+    //     "- Lumbar Spine",
+    //     "- Lumbar X-ray",
+    //     "- Lumbar Spine X-ray",
+    //     "- Lumbar radiograph",
+    //     "",
+    //     "Do not treat imaging from another body part as qualifying evidence for the lumbar MRI authorization.",
+    //   ]
+    //     .filter(Boolean)
+    //     .join("\n");
 
     default:
       return [
