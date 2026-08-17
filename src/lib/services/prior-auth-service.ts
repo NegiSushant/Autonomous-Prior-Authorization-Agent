@@ -3,11 +3,13 @@ import patients from "@/mocks/patients.json";
 import { paGraph as graph } from "@/lib/graph/graph";
 import { PAAgentState } from "@/lib/schemas/state";
 import { retrievePolicyRules } from "@/lib/policy/retrieve-policy-rules";
+import { patientDataService } from "../data/postgres-data-service";
 
 export async function executePriorAuthorization(
   patientId: string,
 ): Promise<PAAgentState> {
-  const patient = patients.find((p) => p.patientId === patientId);
+  // const patient = patients.find((p) => p.patientId === patientId);
+  const patient = await patientDataService.getPatient(patientId);
 
   if (!patient) {
     throw new Error(`Patient '${patientId}' not found.`);

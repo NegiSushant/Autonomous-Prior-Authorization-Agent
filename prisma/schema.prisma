@@ -20,9 +20,72 @@ model User {
   email               String  @unique
   password            String
   name                String?
-  reviews  PriorAuthReview[]
+  role                UserRole @default(REVIEWER)
+  reviews             PriorAuthReview[]
 }
 
+
+model Patient {
+  id              String   @id                     // e.g. PAT001
+  name            String
+  insurancePayer  String
+  procedureCode   String
+  procedureName   String
+  diagnosisCode   String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  notes           ClinicalNote[]
+  medications     MedicationRecord[]
+  imagingReports  ImagingReport[]
+}
+
+model ClinicalNote {
+  id          String   @id @default(cuid())
+  patientId   String
+  documentId  String
+  noteDate    String   // keep string if your mocks use "2026-02-01"
+  bodyText    String
+  sourceType  String   @default("EHR")
+  createdAt   DateTime @default(now())
+
+  patient     Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([patientId])
+  @@index([documentId])
+}
+
+model MedicationRecord {
+  id          String   @id @default(cuid())
+  patientId   String
+  documentId  String
+  drugName    String
+  category    String   // NSAID, Pain Medication, ...
+  recordDate  String
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+
+  patient     Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([patientId])
+  @@index([category])
+}
+
+model ImagingReport {
+  id          String   @id @default(cuid())
+  patientId   String
+  documentId  String
+  bodyPart    String
+  findings    String
+  reportDate  String
+  sourceType  String   @default("Imaging")
+  createdAt   DateTime @default(now())
+
+  patient     Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([patientId])
+  @@index([bodyPart])
+}
 
 model PriorAuthReview {
   id                String   @id @default(cuid())
@@ -57,4 +120,9 @@ model PolicyChunk {
   @@map("policy_chunks")
   @@index([insurance])
   @@index([procedure])
+}
+
+enum UserRole {
+  ADMIN
+  REVIEWER
 }
