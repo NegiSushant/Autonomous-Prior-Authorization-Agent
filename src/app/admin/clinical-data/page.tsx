@@ -1,4 +1,3 @@
-// src/app/admin/clinical-data/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -125,7 +124,7 @@ export default function AdminClinicalDataPage() {
 
     try {
       // Helper function to handle individual fetch calls
-      const apiCall = async (url: string, body: any) => {
+      const apiCall = async (url: string, body: Record<string, unknown>) => {
         const res = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -196,11 +195,11 @@ export default function AdminClinicalDataPage() {
       {/* ─── Header ───────────────────────────────────────────────────────── */}
       <div className="border-b border-slate-200 dark:border-slate-800 pb-6">
         <h1 className="text-3xl font-extrabold tracking-tight">
-          Admin · Clinical Data Setup
+          Patient Information and their Clinical Data Setup
         </h1>
         <p className="mt-2 text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
-          Create mock patients and sequentially inject supporting clinical
-          evidence into the system.
+          Create patients and sequentially inject supporting clinical evidence
+          into the system.
         </p>
       </div>
 
