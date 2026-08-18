@@ -1,4 +1,4 @@
-import AdminClinicalData from "@/components/admin/AdminClinicalData"; // or wherever your form lives
+import AdminClinicalData from "@/components/admin/AdminClinicalData";
 
 export default function NewPatientPage() {
   return <AdminClinicalData mode="create" />;

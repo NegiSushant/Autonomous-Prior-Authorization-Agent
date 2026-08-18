@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import {
   UserPlus,
@@ -16,6 +14,9 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
+import { ReviewItem } from "./ReviewItem";
+import { ReviewCard } from "./ReviewCard";
+import { Field } from "./Field";
 
 type Message = { type: "success" | "error"; text: string };
 
@@ -347,7 +348,7 @@ export default function AdminClinicalData({
 
   return (
     <main className="mx-auto max-w-4xl p-6 md:p-8 space-y-8 text-slate-900 dark:text-white transition-colors duration-200">
-      {/* ─── Header ───────────────────────────────────────────────────────── */}
+      {/*Header*/}
       <div className="border-b border-slate-200 dark:border-slate-800 pb-6">
         <h1 className="text-3xl font-extrabold tracking-tight">
           {mode === "view"
@@ -361,7 +362,7 @@ export default function AdminClinicalData({
         </p>
       </div>
 
-      {/* ─── Alert Banner ─────────────────────────────────────────────────── */}
+      {/*Alert Banner */}
       {message && (
         <div
           className={`flex items-start gap-3 rounded-xl border p-4 shadow-sm animate-in fade-in slide-in-from-top-2 ${
@@ -385,7 +386,7 @@ export default function AdminClinicalData({
         </div>
       )}
 
-      {/* ─── Stepper Progress Bar (Hidden in View Mode) ─────────────────── */}
+      {/*Stepper Progress Bar (Hidden in View Mode)*/}
       {mode !== "view" && (
         <div className="relative flex justify-between items-center px-2">
           <div className="absolute left-0 top-1/2 -z-10 h-0.5 w-full bg-slate-200 dark:bg-slate-800 -translate-y-1/2"></div>
@@ -431,7 +432,7 @@ export default function AdminClinicalData({
         </div>
       )}
 
-      {/* ─── Forms Container ──────────────────────────────────────────────── */}
+      {/* Forms Container */}
       <div className="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
         {currentStep < 4 ? (
           <form
@@ -1115,85 +1116,6 @@ export default function AdminClinicalData({
         )}
       </div>
     </main>
-  );
-}
-
-/* ─── Shared UI Components ─────────────────────────────────────────────── */
-
-function Field({
-  label,
-  htmlFor,
-  hint,
-  children,
-}: {
-  label: string;
-  htmlFor: string;
-  hint?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-1.5 flex flex-col justify-start">
-      <label
-        htmlFor={htmlFor}
-        className="text-sm font-semibold text-slate-800 dark:text-slate-200"
-      >
-        {label}
-      </label>
-      {children}
-      {hint && (
-        <p className="text-xs text-slate-500 dark:text-slate-400 pt-1">
-          {hint}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function ReviewCard({
-  title,
-  stepIndex,
-  onEdit,
-  hideEdit,
-  children,
-}: {
-  title: string;
-  stepIndex: number;
-  onEdit: (i: number) => void;
-  hideEdit?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 md:p-6 shadow-sm relative group transition-colors">
-      <div className="flex justify-between items-center mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">
-        <h3 className="text-lg font-bold text-slate-800 dark:text-white">
-          {title}
-        </h3>
-
-        {!hideEdit && (
-          <button
-            onClick={() => onEdit(stepIndex)}
-            className="flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 px-3 py-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
-            title={`Edit ${title}`}
-          >
-            <Pencil size={14} /> Edit
-          </button>
-        )}
-      </div>
-      <div className="space-y-2">{children}</div>
-    </div>
-  );
-}
-
-function ReviewItem({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="grid grid-cols-[1fr_2fr] gap-4 py-1.5 items-center">
-      <span className="text-sm text-slate-500 dark:text-slate-400">
-        {label}
-      </span>
-      <span className="text-sm font-medium text-slate-900 dark:text-slate-200 wrap-break-word">
-        {value || "—"}
-      </span>
-    </div>
   );
 }
 

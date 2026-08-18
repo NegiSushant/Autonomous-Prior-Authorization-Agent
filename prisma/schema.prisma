@@ -13,7 +13,23 @@ datasource db {
   provider = "postgresql"
 }
 
+model Organization {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   @default("HOSPITAL")   // HOSPITAL | CLINIC | etc.
+  address     String?
+  phone       String?
+  email       String?
+  isActive    Boolean  @default(true)
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
+  users       User[]
+  patients    Patient[]
+
+  @@index([isActive])
+}
 
 model User { 
   id                  Int     @id @default(autoincrement()) 
@@ -22,6 +38,15 @@ model User {
   name                String?
   role                UserRole @default(REVIEWER)
   reviews             PriorAuthReview[]
+
+  // Relation to Organization
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId])
+  @@index([role])
 }
 
 
@@ -38,6 +63,12 @@ model Patient {
   notes           ClinicalNote[]
   medications     MedicationRecord[]
   imagingReports  ImagingReport[]
+
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  @@index([organizationId])
+  @@index([insurancePayer])
 }
 
 model ClinicalNote {

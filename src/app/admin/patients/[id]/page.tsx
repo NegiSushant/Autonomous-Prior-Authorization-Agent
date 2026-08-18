@@ -1,6 +1,6 @@
 import prismaClient from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import AdminClinicalData from "@/components/admin/AdminClinicalData"; // move your form here
+import AdminClinicalData from "@/components/admin/AdminClinicalData";
 
 type Props = {
   params: Promise<{ id: string }>;

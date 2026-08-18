@@ -4,11 +4,13 @@ export function ReviewCard({
   title,
   stepIndex,
   onEdit,
+  hideEdit,
   children,
 }: {
   title: string;
   stepIndex: number;
   onEdit: (i: number) => void;
+  hideEdit?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -18,14 +20,15 @@ export function ReviewCard({
           {title}
         </h3>
 
-        {/* Labeled Edit Button */}
-        <button
-          onClick={() => onEdit(stepIndex)}
-          className="flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 px-3 py-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
-          title={`Edit ${title}`}
-        >
-          <Pencil size={14} /> Edit
-        </button>
+        {!hideEdit && (
+          <button
+            onClick={() => onEdit(stepIndex)}
+            className="flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 px-3 py-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
+            title={`Edit ${title}`}
+          >
+            <Pencil size={14} /> Edit
+          </button>
+        )}
       </div>
       <div className="space-y-2">{children}</div>
     </div>
