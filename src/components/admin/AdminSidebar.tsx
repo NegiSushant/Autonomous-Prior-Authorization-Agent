@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
+  Landmark,
   Users,
   FileText,
   Settings,
@@ -15,7 +16,12 @@ import {
 
 const navItems = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "User Management", href: "/admin/users", icon: Users },
+  {
+    name: "Organization Management",
+    href: "/admin/organizations",
+    icon: Landmark,
+  },
+  // { name: "Organization Management", href: "/admin/organizations", icon: Users },
   { name: "Patient Management", href: "/admin/patients", icon: FileText },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];

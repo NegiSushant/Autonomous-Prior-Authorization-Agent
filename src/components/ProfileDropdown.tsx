@@ -91,7 +91,7 @@ export default function ProfileDropdown() {
               <button
                 onClick={() => {
                   setIsOpen(false);
-                  router.push("/admin/clinical-data");
+                  router.push("/admin/organizations");
                 }}
                 className="w-full flex items-center space-x-3 px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >

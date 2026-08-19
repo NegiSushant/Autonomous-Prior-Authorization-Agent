@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
         email: email,
         password: hashPassword,
         name: name,
+        organizationId: 1,
       },
     });
 

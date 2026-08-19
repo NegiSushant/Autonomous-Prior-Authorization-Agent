@@ -10,7 +10,6 @@ import {
   X,
   ArrowRight,
   ArrowLeft,
-  Pencil,
   Plus,
   Trash2,
 } from "lucide-react";
@@ -68,11 +67,15 @@ export type InitialData = {
 type Props = {
   mode?: "create" | "view" | "edit";
   initialData?: InitialData;
+  onSuccess?: () => void;
+  onCancel?: () => void;
 };
 
 export default function AdminClinicalData({
   mode = "create",
   initialData,
+  onSuccess,
+  onCancel,
 }: Props) {
   const [currentStep, setCurrentStep] = useState(mode === "create" ? 0 : 4);
   const [message, setMessage] = useState<Message | null>(null);
@@ -332,6 +335,7 @@ export default function AdminClinicalData({
             },
           ],
         });
+        onSuccess?.();
       }
     } catch (err) {
       setMessage({
@@ -1118,6 +1122,7 @@ export default function AdminClinicalData({
     </main>
   );
 }
+
 
 const inputClass =
   "w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900/50 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-500 dark:focus:bg-slate-900 dark:focus:ring-blue-500/20";

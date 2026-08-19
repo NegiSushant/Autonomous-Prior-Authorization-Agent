@@ -6,7 +6,6 @@
 generator client {
   provider = "prisma-client"
   output = "../src/generated/prisma"
-  // output   = "../app/generated/prisma"
 }
 
 datasource db {
@@ -14,36 +13,33 @@ datasource db {
 }
 
 model Organization {
-  id          String   @id @default(cuid())
-  name        String
-  type        String   @default("HOSPITAL")   // HOSPITAL | CLINIC | etc.
-  address     String?
-  phone       String?
-  email       String?
-  isActive    Boolean  @default(true)
-  createdBy   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  users       User[]
-  patients    Patient[]
+  id               Int                  @id @default(autoincrement())
+  name             String
+  type             OrgType              @default(DEMO)
+  address          String?
+  phone            String?
+  email            String?
+  isActive         Boolean              @default(true)
+  createdBy        String
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  users            User[]
+  patients         Patient[]
 
   @@index([isActive])
 }
 
 model User { 
-  id                  Int     @id @default(autoincrement()) 
-  email               String  @unique
-  password            String
-  name                String?
-  role                UserRole @default(REVIEWER)
-  reviews             PriorAuthReview[]
-
-  // Relation to Organization
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id                Int                 @id @default(autoincrement()) 
+  email             String              @unique
+  password          String
+  name              String?
+  role              UserRole            @default(REVIEWER)
+  reviews           PriorAuthReview[]
+  organizationId    Int?
+  organization      Organization?       @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
 
   @@index([organizationId])
   @@index([role])
@@ -51,75 +47,68 @@ model User {
 
 
 model Patient {
-  id              String   @id                     // e.g. PAT001
-  name            String
-  insurancePayer  String
-  procedureCode   String
-  procedureName   String
-  diagnosisCode   String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  notes           ClinicalNote[]
-  medications     MedicationRecord[]
-  imagingReports  ImagingReport[]
-
-  organizationId  String
-  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  id                String                @id
+  name              String
+  insurancePayer    String
+  procedureCode     String
+  procedureName     String
+  diagnosisCode     String
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  organizationId    Int
+  notes             ClinicalNote[]
+  medications       MedicationRecord[]
+  imagingReports    ImagingReport[]
+  organization      Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   
   @@index([organizationId])
   @@index([insurancePayer])
 }
 
 model ClinicalNote {
-  id          String   @id @default(cuid())
-  patientId   String
-  documentId  String
-  noteDate    String   // keep string if your mocks use "2026-02-01"
-  bodyText    String
-  sourceType  String   @default("EHR")
-  createdAt   DateTime @default(now())
-
-  patient     Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  id                Int                 @id @default(autoincrement())
+  patientId         String
+  documentId        String
+  noteDate          DateTime
+  bodyText          String
+  sourceType        String              @default("EHR")
+  createdAt         DateTime            @default(now())
+  patient           Patient             @relation(fields: [patientId], references: [id], onDelete: Cascade)
 
   @@index([patientId])
   @@index([documentId])
 }
 
 model MedicationRecord {
-  id          String   @id @default(cuid())
-  patientId   String
-  documentId  String
-  drugName    String
-  category    String   // NSAID, Pain Medication, ...
-  recordDate  String
-  status      String   @default("active")
-  createdAt   DateTime @default(now())
-
-  patient     Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
-
+  id                Int                 @id @default(autoincrement())
+  patientId         String
+  documentId        String
+  drugName          String
+  category          String 
+  recordDate        String
+  status            String             @default("active")
+  createdAt         DateTime           @default(now())
+  patient           Patient            @relation(fields: [patientId], references: [id], onDelete: Cascade)
   @@index([patientId])
   @@index([category])
 }
 
 model ImagingReport {
-  id          String   @id @default(cuid())
-  patientId   String
-  documentId  String
-  bodyPart    String
-  findings    String
-  reportDate  String
-  sourceType  String   @default("Imaging")
-  createdAt   DateTime @default(now())
-
-  patient     Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
-
+  id                Int                 @id @default(autoincrement())
+  patientId         String
+  documentId        String
+  bodyPart          String
+  findings          String
+  reportDate        String
+  sourceType        String              @default("Imaging")
+  createdAt         DateTime            @default(now())
+  patient           Patient             @relation(fields: [patientId], references: [id], onDelete: Cascade)
   @@index([patientId])
   @@index([bodyPart])
 }
 
 model PriorAuthReview {
-  id                String   @id @default(cuid())
+  id                Int   @id @default(autoincrement())
   patientId         String
   agentRecommendation String
   agentStatus       String
@@ -156,4 +145,10 @@ model PolicyChunk {
 enum UserRole {
   ADMIN
   REVIEWER
+}
+
+enum OrgType{
+  DEMO
+  HOSPITAL
+  CLINIC
 }

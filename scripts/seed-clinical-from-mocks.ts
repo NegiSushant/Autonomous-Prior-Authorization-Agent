@@ -13,6 +13,9 @@ async function main() {
         procedureCode: p.procedureCode,
         procedureName: p.procedureName,
         diagnosisCode: p.diagnosisCode,
+        organization: {
+          connect: { id: 1 },
+        },
       },
       update: {
         name: p.name,
