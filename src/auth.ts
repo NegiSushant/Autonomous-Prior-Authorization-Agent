@@ -55,6 +55,7 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           role: user.role,
+          orgId: user.organizationId,
         };
       },
     }),
@@ -66,12 +67,18 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.email = user.email;
         token.role = user.role;
+        token.orgId = user.orgId;
       }
       if (!process.env.JWT_ACCESS_SECRET) {
         throw new Error("JWT_ACCESS_SECRET is ABSOLUTELY REQUIRED and not set");
       }
       token.accessToken = jwt.sign(
-        { id: token.id, email: token.email, role: token.role },
+        {
+          id: token.id,
+          email: token.email,
+          role: token.role,
+          orgId: token.orgId,
+        },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "7d" },
       );
@@ -83,12 +90,12 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
         session.user.role = token.role as UserRole;
+        session.user.orgId = token.orgId as number | null;
         session.accessToken = token.accessToken as string;
       }
       return session;
     },
   },
-  // secret: process.env.JWT_ACCESS_SECRET,
   secret: process.env.NEXTAUTH_SECRET,
 };
 

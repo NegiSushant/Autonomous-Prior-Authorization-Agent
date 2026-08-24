@@ -1,7 +1,6 @@
-// src/lib/data/types.ts
 export interface ClinicalEvidenceRow {
   documentId: string;
-  dateFound: string;
+  dateFound: Date;
   snippetText: string;
   sourceType: string;
   status?: string;

@@ -2,18 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { Plus, Search, Loader2, X, UserRound } from "lucide-react";
-import AdminClinicalData, {
-  InitialData,
-} from "@/components/admin/AdminClinicalData"; // adjust path
+import AdminClinicalData from "@/components/admin/AdminClinicalData";
+import { InitialData } from "@/components/admin/steps/constants";
 
 type PatientRow = {
-  id: string;
+  id: number;
   name: string;
+  email: string;
   insurancePayer: string;
   procedureCode: string;
   procedureName: string;
   diagnosisCode: string;
-  _count: {
+  _count?: {
     notes: number;
     medications: number;
     imagingReports: number;
@@ -37,12 +37,15 @@ export default function PatientsPage() {
 
   const fetchPatients = async () => {
     try {
-      setError(null);
       const res = await fetch("/api/admin/patients");
       const json = await res.json();
-      if (!res.ok || !json.success)
+
+      if (!res.ok || !json.success) {
         throw new Error(json.message || "Failed to load");
-      setPatients(json.data);
+      }
+
+      setPatients(json.data ?? []);
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -51,7 +54,11 @@ export default function PatientsPage() {
   };
 
   useEffect(() => {
-    fetchPatients();
+    const init = async () => {
+      await fetchPatients();
+    };
+
+    init();
   }, []);
 
   const openCreateModal = () => {
@@ -60,7 +67,7 @@ export default function PatientsPage() {
     setIsModalOpen(true);
   };
 
-  const openPatientModal = async (id: string, mode: "view" | "edit") => {
+  const openPatientModal = async (id: number, mode: "view" | "edit") => {
     setModalMode(mode);
     setModalLoading(true);
     setIsModalOpen(true);
@@ -80,15 +87,48 @@ export default function PatientsPage() {
     }
   };
 
+  // --- DELETE HANDLER ---
+  const handleDelete = async (id: number) => {
+    // Add a confirmation dialog so records aren't accidentally deleted
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this patient and all their associated records? This cannot be undone.",
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/patients/${id}`, {
+        method: "DELETE",
+      });
+      const json = await res.json();
+
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || "Failed to delete patient");
+      }
+
+      // Refresh the patient list automatically after a successful deletion
+      void refreshPatients();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete patient");
+    }
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setInitialData(undefined);
   };
 
+  const refreshPatients = async () => {
+    setLoading(true);
+    setError(null);
+    await fetchPatients();
+  };
+
   const handleSuccess = () => {
     closeModal();
-    setLoading(true);
-    fetchPatients();
+    void refreshPatients();
   };
 
   return (
@@ -155,6 +195,7 @@ export default function PatientsPage() {
                 <tr className="bg-slate-50 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 text-left">
                   <th className="px-5 py-3 font-medium">Patient ID</th>
                   <th className="px-5 py-3 font-medium">Name</th>
+                  <th className="px-5 py-3 font-medium">Patient Email</th>
                   <th className="px-5 py-3 font-medium">Insurance</th>
                   <th className="px-5 py-3 font-medium">Procedure</th>
                   <th className="px-5 py-3 font-medium">Diagnosis</th>
@@ -168,7 +209,7 @@ export default function PatientsPage() {
                 {patients.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={9}
+                      colSpan={10}
                       className="px-5 py-10 text-center text-slate-500"
                     >
                       <div className="flex flex-col items-center gap-3">
@@ -195,6 +236,9 @@ export default function PatientsPage() {
                       <td className="px-5 py-3 font-medium text-slate-900 dark:text-white">
                         {patient.name}
                       </td>
+                      <td className="px-5 py-3 font-medium text-slate-900 dark:text-white">
+                        {patient.email}
+                      </td>
                       <td className="px-5 py-3 text-slate-600 dark:text-slate-300">
                         {patient.insurancePayer}
                       </td>
@@ -211,32 +255,48 @@ export default function PatientsPage() {
                       </td>
                       <td className="px-5 py-3 text-center">
                         <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-medium">
-                          {patient._count.notes}
+                          {patient._count?.notes ?? 0}
                         </span>
                       </td>
                       <td className="px-5 py-3 text-center">
                         <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-medium">
-                          {patient._count.medications}
+                          {patient._count?.medications ?? 0}
                         </span>
                       </td>
                       <td className="px-5 py-3 text-center">
                         <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-medium">
-                          {patient._count.imagingReports}
+                          {patient._count?.imagingReports ?? 0}
                         </span>
                       </td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-3">
                           <button
-                            onClick={() => openPatientModal(patient.id, "view")}
+                            onClick={() => {
+                              if (patient.id == null) return;
+                              openPatientModal(patient.id, "view");
+                            }}
                             className="text-blue-600 hover:text-blue-700 dark:text-blue-400 text-xs font-semibold"
                           >
                             View
                           </button>
                           <button
-                            onClick={() => openPatientModal(patient.id, "edit")}
+                            onClick={() => {
+                              if (patient.id == null) return;
+                              openPatientModal(patient.id, "edit");
+                            }}
                             className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white text-xs font-semibold"
                           >
                             Edit
+                          </button>
+                          {/* --- DELETE BUTTON --- */}
+                          <button
+                            onClick={() => {
+                              if (patient.id == null) return;
+                              handleDelete(patient.id);
+                            }}
+                            className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-xs font-semibold"
+                          >
+                            Delete
                           </button>
                         </div>
                       </td>

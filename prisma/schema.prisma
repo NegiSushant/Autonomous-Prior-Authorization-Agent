@@ -47,8 +47,9 @@ model User {
 
 
 model Patient {
-  id                String                @id
+  id                Int      @id @default(autoincrement())
   name              String
+  email             String?
   insurancePayer    String
   procedureCode     String
   procedureName     String
@@ -67,7 +68,7 @@ model Patient {
 
 model ClinicalNote {
   id                Int                 @id @default(autoincrement())
-  patientId         String
+  patientId         Int
   documentId        String
   noteDate          DateTime
   bodyText          String
@@ -81,7 +82,7 @@ model ClinicalNote {
 
 model MedicationRecord {
   id                Int                 @id @default(autoincrement())
-  patientId         String
+  patientId         Int
   documentId        String
   drugName          String
   category          String 
@@ -95,7 +96,7 @@ model MedicationRecord {
 
 model ImagingReport {
   id                Int                 @id @default(autoincrement())
-  patientId         String
+  patientId         Int
   documentId        String
   bodyPart          String
   findings          String

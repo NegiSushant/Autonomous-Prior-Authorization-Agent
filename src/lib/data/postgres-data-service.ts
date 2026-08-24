@@ -1,4 +1,3 @@
-// src/lib/data/postgres-data-service.ts
 import prismaClient from "@/lib/prisma";
 import {
   ClinicalEvidenceRow,
