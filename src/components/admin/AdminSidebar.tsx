@@ -6,12 +6,12 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Landmark,
-  Users,
   FileText,
   Settings,
   Menu,
   X,
   ShieldCheck,
+  User,
 } from "lucide-react";
 
 const navItems = [
@@ -23,6 +23,7 @@ const navItems = [
   },
   // { name: "Organization Management", href: "/admin/organizations", icon: Users },
   { name: "Patient Management", href: "/admin/patients", icon: FileText },
+  { name: "User Management", href: "/admin/user", icon: User },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

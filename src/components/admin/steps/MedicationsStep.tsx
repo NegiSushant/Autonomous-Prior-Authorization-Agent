@@ -2,7 +2,6 @@ import { Plus, Trash2 } from "lucide-react";
 import { Field } from "../Field";
 import { inputClass } from "./constants";
 
-// 1. Define the shape of a single Medication record
 export type MedicationItem = {
   id?: string;
   patientId?: number;
@@ -13,7 +12,6 @@ export type MedicationItem = {
   status: string;
 };
 
-// 2. Replace 'any[]' with 'MedicationItem[]'
 type Props = {
   medications: MedicationItem[];
   onChange: (index: number, field: string, value: string) => void;
@@ -39,7 +37,6 @@ export default function MedicationsStep({
       </div>
 
       <div className="space-y-6">
-        {/* TypeScript automatically knows 'med' is of type 'MedicationItem' now */}
         {medications.map((med, index) => (
           <div
             key={index}

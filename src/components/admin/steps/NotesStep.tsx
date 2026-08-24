@@ -2,7 +2,6 @@ import { Plus, Trash2 } from "lucide-react";
 import { Field } from "../Field";
 import { inputClass } from "./constants";
 
-// 1. Define the shape of a single Note
 export type NoteItem = {
   id?: string;
   patientId?: number;
@@ -12,7 +11,6 @@ export type NoteItem = {
   sourceType?: string;
 };
 
-// 2. Define the exact props this component expects
 type Props = {
   notes: NoteItem[];
   onChange: (index: number, field: string, value: string) => void;
@@ -21,7 +19,7 @@ type Props = {
   mode?: "create" | "view" | "edit";
 };
 
-// 3. Replace 'any' with 'Props'
+
 export default function NotesStep({
   notes,
   onChange,
@@ -36,7 +34,6 @@ export default function NotesStep({
       </div>
 
       <div className="space-y-6">
-        {/* TypeScript automatically knows 'note' is of type 'NoteItem' now */}
         {notes.map((note, index) => (
           <div
             key={index}

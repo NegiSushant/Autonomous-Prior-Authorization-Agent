@@ -14,44 +14,6 @@ export const STEPS = [
   { id: "review", title: "Review", icon: CheckCircle2 },
 ];
 
-// export type InitialData = {
-//   patient: {
-//     id?: number; // Optional DB id
-//     patientId?: number;
-//     name: string;
-//     insurancePayer: string;
-//     diagnosisCode: string;
-//     procedureCode: string;
-//     procedureName: string;
-//     organizationId?: string;
-//   };
-//   notes: {
-//     id?: number;
-//     patientId?: number;
-//     documentId: string;
-//     noteDate: string;
-//     bodyText: string;
-//     sourceType?: string;
-//   }[];
-//   medications: {
-//     id?: number;
-//     patientId?: number;
-//     documentId: string;
-//     drugName: string;
-//     category: string;
-//     recordDate: string;
-//     status: string;
-//   }[];
-//   imaging: {
-//     id?: number;
-//     patientId?: number;
-//     documentId: string;
-//     bodyPart: string;
-//     findings: string;
-//     reportDate: string;
-//     sourceType?: string;
-//   }[];
-// };
 export type InitialData = {
   patient: {
     id?: number;

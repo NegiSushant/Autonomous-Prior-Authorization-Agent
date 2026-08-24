@@ -1,8 +1,7 @@
 import { Plus, Trash2 } from "lucide-react";
 import { Field } from "../Field";
-import { inputClass } from "./constants"; // Adjust import path as needed
+import { inputClass } from "./constants";
 
-// 1. Define the shape of a single Imaging record
 export type ImagingItem = {
   id?: string;
   patientId?: number;
@@ -13,7 +12,6 @@ export type ImagingItem = {
   sourceType?: string;
 };
 
-// 2. Replace 'any[]' with 'ImagingItem[]'
 type Props = {
   imaging: ImagingItem[];
   onChange: (index: number, field: string, value: string) => void;
@@ -39,7 +37,6 @@ export default function ImagingStep({
       </div>
 
       <div className="space-y-6">
-        {/* TypeScript automatically knows 'img' is of type 'ImagingItem' now */}
         {imaging.map((img, index) => (
           <div
             key={index}
