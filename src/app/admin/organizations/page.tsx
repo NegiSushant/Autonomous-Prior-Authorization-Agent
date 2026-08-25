@@ -56,7 +56,10 @@ export default function OrganizationsPage() {
   };
 
   useEffect(() => {
-    fetchOrganizations();
+    const init = async () => {
+      await fetchOrganizations();
+    };
+    init();
   }, []);
 
   const openCreateModal = () => {

@@ -1,0 +1,5 @@
+-- AlterEnum
+ALTER TYPE "OrgType" ADD VALUE 'OTHERS';
+
+-- AlterEnum
+ALTER TYPE "UserRole" ADD VALUE 'SUPERADMIN';

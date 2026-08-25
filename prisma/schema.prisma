@@ -144,6 +144,7 @@ model PolicyChunk {
 }
 
 enum UserRole {
+  SUPERADMIN
   ADMIN
   REVIEWER
 }
@@ -152,4 +153,5 @@ enum OrgType{
   DEMO
   HOSPITAL
   CLINIC
+  OTHERS
 }
