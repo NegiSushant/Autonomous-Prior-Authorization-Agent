@@ -1,4 +1,4 @@
-import { Patient } from "@/types/patientRecord";
+import { Patient, PatientFullInformation } from "@/types/patientRecord";
 import { IPatientDataRepository } from "../interfaces/IRepository/IPatientDataRepository";
 import prismaClient from "@/lib/prisma";
 
@@ -22,5 +22,26 @@ export class PatientDataRepository implements IPatientDataRepository {
 
   async deletePatientDataByIdAsync(patientId: number): Promise<boolean> {
     return true;
+  }
+
+  async insertPatientDataAsync(): Promise<boolean | false> {
+    return true;
+  }
+
+  async getFullPatientInfoAsync(): Promise<PatientFullInformation | null> {
+    try {
+      const patients = await prismaClient.patient.findMany({
+        orderBy: { createdAt: "desc" },
+        include: {
+          notes: true,
+          medications: true,
+          imagingReports: true,
+        },
+      });
+
+      return patients;
+    } catch (error) {
+      return null;
+    }
   }
 }
