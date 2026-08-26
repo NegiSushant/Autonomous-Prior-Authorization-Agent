@@ -86,7 +86,7 @@ model MedicationRecord {
   documentId        String
   drugName          String
   category          String 
-  recordDate        String
+  recordDate        DateTime
   status            String             @default("active")
   createdAt         DateTime           @default(now())
   patient           Patient            @relation(fields: [patientId], references: [id], onDelete: Cascade)
@@ -100,7 +100,7 @@ model ImagingReport {
   documentId        String
   bodyPart          String
   findings          String
-  reportDate        String
+  reportDate        DateTime
   sourceType        String              @default("Imaging")
   createdAt         DateTime            @default(now())
   patient           Patient             @relation(fields: [patientId], references: [id], onDelete: Cascade)

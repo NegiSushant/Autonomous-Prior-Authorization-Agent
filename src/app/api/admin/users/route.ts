@@ -7,14 +7,30 @@ import { authOptions } from "@/auth";
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
+
+    if (!session?.user) {
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
         { status: 401 },
       );
     }
 
+    const role = session.user.role;
+    const organizationId = session.user.orgId;
+
+    // Only ADMIN and SUPERADMIN can call this endpoint
+    if (role !== "ADMIN" && role !== "SUPERADMIN") {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 },
+      );
+    }
+
+    // Build the where clause based on role
+    const whereClause = role === "SUPERADMIN" ? {} : { organizationId };
+
     const users = await prismaClient.user.findMany({
+      where: whereClause,
       orderBy: { createdAt: "desc" },
       select: {
         id: true,
@@ -42,7 +58,17 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
+    if (!session?.user) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 },
+      );
+    }
+
+    const currentUserRole = session.user.role;
+
+    // Only ADMIN and SUPERADMIN can call this endpoint
+    if (currentUserRole !== "ADMIN" && currentUserRole !== "SUPERADMIN") {
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
         { status: 401 },

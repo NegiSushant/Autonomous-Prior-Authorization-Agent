@@ -48,7 +48,17 @@ export async function GET(_req: Request, { params }: Params) {
 export async function PUT(req: Request, { params }: Params) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
+    if (!session?.user) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 },
+      );
+    }
+
+    const currentUserRole = session.user.role;
+
+    // Only ADMIN and SUPERADMIN can call this endpoint
+    if (currentUserRole !== "ADMIN" && currentUserRole !== "SUPERADMIN") {
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
         { status: 401 },
@@ -95,7 +105,17 @@ export async function PUT(req: Request, { params }: Params) {
 export async function DELETE(_req: Request, { params }: Params) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
+    if (!session?.user) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 },
+      );
+    }
+
+    const currentUserRole = session.user.role;
+
+    // Only ADMIN and SUPERADMIN can call this endpoint
+    if (currentUserRole !== "ADMIN" && currentUserRole !== "SUPERADMIN") {
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
         { status: 401 },

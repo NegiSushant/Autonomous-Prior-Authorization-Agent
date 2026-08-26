@@ -1,29 +1,6 @@
-import prismaClient from "@/lib/prisma";
-import {
-  ClinicalEvidenceRow,
-  IPatientDataService,
-  PatientRecord,
-} from "./types";
+import { IPatientDataService } from "@/lib/interfaces/IServices/IPatientDataService";
 
-function toPatient(p: {
-  id: string;
-  name: string;
-  insurancePayer: string;
-  procedureCode: string;
-  procedureName: string;
-  diagnosisCode: string;
-}): PatientRecord {
-  return {
-    patientId: p.id,
-    name: p.name,
-    insurancePayer: p.insurancePayer,
-    procedureCode: p.procedureCode,
-    procedureName: p.procedureName,
-    diagnosisCode: p.diagnosisCode,
-  };
-}
-
-export class PostgresDataService implements IPatientDataService {
+export class PatientDataService implements IPatientDataService {
   async getPatient(patientId: string) {
     const p = await prismaClient.patient.findUnique({
       where: { id: patientId },

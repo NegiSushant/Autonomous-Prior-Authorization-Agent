@@ -1,19 +1,4 @@
-export interface ClinicalEvidenceRow {
-  documentId: string;
-  dateFound: Date;
-  snippetText: string;
-  sourceType: string;
-  status?: string;
-}
-
-export interface PatientRecord {
-  patientId: string;
-  name: string;
-  insurancePayer: string;
-  procedureCode: string;
-  procedureName: string;
-  diagnosisCode: string;
-}
+import { PatientRecord, ClinicalEvidenceRow } from "@/types/patientRecord";
 
 export interface IPatientDataService {
   getPatient(patientId: string): Promise<PatientRecord | null>;
