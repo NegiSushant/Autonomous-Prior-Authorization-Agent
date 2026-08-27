@@ -60,9 +60,23 @@ export interface ImagingReportData {
   createdAt?: Date;
 }
 
-export interface PatientFullInformation {
-  patientData: Patient[];
+export interface PatientFullInformation extends Patient {
   notes: ClinicalNote[];
-  MedicationRecord: MedicationRecordData[];
-  ImagingReport: ImagingReportData[];
+  medications: MedicationRecordData[];
+  imagingReports: ImagingReportData[];
 }
+
+export type InsertPatientPayload = {
+  patient: {
+    name: string;
+    email?: string | null;
+    insurancePayer: string;
+    procedureCode: string;
+    procedureName: string;
+    diagnosisCode: string;
+    organizationId: number | string;
+  };
+  notes?: ClinicalNote[];
+  medications?: MedicationRecordData[];
+  imaging?: ImagingReportData[];
+};
