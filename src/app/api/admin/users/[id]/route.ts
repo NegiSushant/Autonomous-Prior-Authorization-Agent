@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-import prismaClient from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
+import { getUserRepository } from "@/di/reposetriesDiI";
 
-type Params = { params: Promise<{ id: string }> };
+type Params = { params: Promise<{ id: number }> };
 
 export async function GET(_req: Request, { params }: Params) {
   try {
@@ -17,17 +17,8 @@ export async function GET(_req: Request, { params }: Params) {
     }
 
     const { id } = await params;
-    const user = await prismaClient.user.findUnique({
-      where: { id: Number(id) },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        organizationId: true,
-        organization: { select: { id: true, name: true } },
-      },
-    });
+    const repo = getUserRepository();
+    const user = await repo.getUserByIdAsync(id);
 
     if (!user) {
       return NextResponse.json(
@@ -38,6 +29,7 @@ export async function GET(_req: Request, { params }: Params) {
 
     return NextResponse.json({ success: true, data: user });
   } catch (error) {
+    console.error("Error while retrive patient info: ", error);
     return NextResponse.json(
       { success: false, message: "Server error" },
       { status: 500 },
@@ -66,33 +58,40 @@ export async function PUT(req: Request, { params }: Params) {
     }
 
     const { id } = await params;
+    const userId = Number(id);
     const body = await req.json();
     const { email, password, name, role, organizationId } = body;
 
-    const data: Record<string, unknown> = {
+    // const data: Record<string, unknown> = {
+    //   email: email?.trim(),
+    //   name: name?.trim() || null,
+    //   role: role || "REVIEWER",
+    //   organizationId: organizationId ? Number(organizationId) : null,
+    // };
+
+    // if (password?.trim()) {
+    //   data.password = await bcrypt.hash(password, 10);
+    // }
+
+    const repo = getUserRepository();
+    const user = await repo.updateUserDataByIdAsync(userId, {
       email: email?.trim(),
       name: name?.trim() || null,
       role: role || "REVIEWER",
       organizationId: organizationId ? Number(organizationId) : null,
-    };
-
-    if (password?.trim()) {
-      data.password = await bcrypt.hash(password, 10);
-    }
-
-    const user = await prismaClient.user.update({
-      where: { id: Number(id) },
-      data,
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        organizationId: true,
-      },
     });
 
-    return NextResponse.json({ success: true, data: user });
+    if (!user) {
+      return NextResponse.json(
+        { success: false, message: "Failed to update user" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, message: "User updated successfully." },
+      { status: 200 },
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -123,9 +122,22 @@ export async function DELETE(_req: Request, { params }: Params) {
     }
 
     const { id } = await params;
-    await prismaClient.user.delete({ where: { id: Number(id) } });
+    const userId = Number(id);
+    const repo = getUserRepository();
 
-    return NextResponse.json({ success: true });
+    const isUserDeleted = await repo.deleteUserDataByIdAsync(userId);
+
+    if (!isUserDeleted) {
+      return NextResponse.json(
+        { success: false, message: "Failed to delete user" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, message: "User deleted Successfully." },
+      { status: 200 },
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(

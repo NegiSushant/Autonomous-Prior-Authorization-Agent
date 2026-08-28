@@ -1,10 +1,13 @@
 import { IOrganizationsRepository } from "@/lib/interfaces/IRepository/IOrganizationsRepository";
 import { IPatientDataRepository } from "@/lib/interfaces/IRepository/IPatientDataRepository";
+import { IUserRepository } from "@/lib/interfaces/IRepository/IUserRepository";
 import { OrganizationRepository } from "@/repository/OrganizationRepository";
 import { PatientDataRepository } from "@/repository/PatientDataRepository";
+import { UserRepository } from "@/repository/UserRepository";
 
 let patientDataRepository: IPatientDataRepository | null = null;
 let organisationRepository: IOrganizationsRepository | null = null;
+let userRepository: IUserRepository | null = null;
 
 export function getPatientDataRepository(): IPatientDataRepository {
   if (!patientDataRepository) {
@@ -18,4 +21,11 @@ export function getOrganizationRepository(): IOrganizationsRepository {
     organisationRepository = new OrganizationRepository();
   }
   return organisationRepository;
+}
+
+export function getUserRepository(): IUserRepository {
+  if (!userRepository) {
+    userRepository = new UserRepository();
+  }
+  return userRepository;
 }

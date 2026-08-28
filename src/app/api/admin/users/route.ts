@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-import prismaClient from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
+import { getUserRepository } from "@/di/reposetriesDiI";
 
 export async function GET() {
   try {
@@ -16,7 +16,7 @@ export async function GET() {
     }
 
     const role = session.user.role;
-    const organizationId = session.user.orgId;
+    // const organizationId = session.user.orgId;
 
     // Only ADMIN and SUPERADMIN can call this endpoint
     if (role !== "ADMIN" && role !== "SUPERADMIN") {
@@ -27,23 +27,10 @@ export async function GET() {
     }
 
     // Build the where clause based on role
-    const whereClause = role === "SUPERADMIN" ? {} : { organizationId };
+    // const whereClause = role === "SUPERADMIN" ? {} : { organizationId };
+    const repo = getUserRepository();
 
-    const users = await prismaClient.user.findMany({
-      where: whereClause,
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        organizationId: true,
-        createdAt: true,
-        organization: {
-          select: { id: true, name: true },
-        },
-      },
-    });
+    const users = await repo.getFullUserInfoAsync();
 
     return NextResponse.json({ success: true, data: users });
   } catch (error) {
@@ -84,37 +71,29 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
+    const repo = getUserRepository();
+    const hashed = await bcrypt.hash(password, 10);
 
-    const existing = await prismaClient.user.findUnique({
-      where: { email: email.trim() },
+
+    const user = await repo.insertUserDataAsync({
+      email: email.trim(),
+      password: hashed,
+      name: name?.trim() || null,
+      role: role || "REVIEWER",
+      organizationId: organizationId ? Number(organizationId) : null,
     });
-    if (existing) {
+
+    if (!user) {
       return NextResponse.json(
-        { success: false, message: "Email already in use" },
-        { status: 400 },
+        { success: false, message: "Failed to create user" },
+        { status: 404 },
       );
     }
 
-    const hashed = await bcrypt.hash(password, 10);
-
-    const user = await prismaClient.user.create({
-      data: {
-        email: email.trim(),
-        password: hashed,
-        name: name?.trim() || null,
-        role: role || "REVIEWER",
-        organizationId: organizationId ? Number(organizationId) : null,
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        organizationId: true,
-      },
-    });
-
-    return NextResponse.json({ success: true, data: user });
+    return NextResponse.json(
+      { success: true, message: "User created successfully!" },
+      { status: 200 },
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
