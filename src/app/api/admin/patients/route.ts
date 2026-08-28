@@ -5,7 +5,8 @@ import { getPatientDataRepository } from "@/di/reposetriesDiI";
 export async function GET() {
   try {
     const repo = getPatientDataRepository();
-    const patients = repo.getFullPatientInfoAsync();
+    const patients = await repo.getFullPatientInfoAsync();
+    console.log(patients);
     return NextResponse.json({ success: true, data: patients });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Error";

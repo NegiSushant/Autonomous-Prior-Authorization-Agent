@@ -1,8 +1,3 @@
-export interface IOrganization {
-  id: number;
-  type: "DEMO" | "HOSPITAL" | "CLINIC" | "OTHERS";
-}
-
 export interface IPatient {
   id: number;
   name: string;

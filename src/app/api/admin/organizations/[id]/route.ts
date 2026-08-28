@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import prismaClient from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
+import { getOrganizationRepository } from "@/di/reposetriesDiI";
 
-type Params = { params: Promise<{ id: string }> };
+type Params = { params: Promise<{ id: number }> };
 
 export async function GET(_req: Request, { params }: Params) {
   try {
@@ -14,11 +14,10 @@ export async function GET(_req: Request, { params }: Params) {
         { status: 401 },
       );
     }
-
     const { id } = await params;
-    const organization = await prismaClient.organization.findUnique({
-      where: { id: Number(id) },
-    });
+
+    const repo = getOrganizationRepository();
+    const organization = await repo.getOrganizationByIdAsync(id);
 
     if (!organization) {
       return NextResponse.json(
@@ -29,6 +28,7 @@ export async function GET(_req: Request, { params }: Params) {
 
     return NextResponse.json({ success: true, data: organization });
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { success: false, message: "Server error" },
       { status: 500 },
@@ -47,18 +47,18 @@ export async function PUT(req: Request, { params }: Params) {
     }
 
     const { id } = await params;
+    const orgId = Number(id);
     const body = await req.json();
 
-    const organization = await prismaClient.organization.update({
-      where: { id: Number(id) },
-      data: {
-        name: body.name?.trim(),
-        type: body.type,
-        address: body.address || null,
-        phone: body.phone || null,
-        email: body.email || null,
-        isActive: body.isActive,
-      },
+    const repo = getOrganizationRepository();
+
+    const organization = await repo.updateOrganizationByIdAsync(orgId, {
+      name: body.name?.trim(),
+      type: body.type,
+      address: body.address || null,
+      phone: body.phone || null,
+      email: body.email || null,
+      isActive: body.isActive,
     });
 
     return NextResponse.json({ success: true, data: organization });
@@ -66,6 +66,37 @@ export async function PUT(req: Request, { params }: Params) {
     console.error(error);
     return NextResponse.json(
       { success: false, message: "Failed to update" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(req: Request, { params }: Params) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== "ADMIN") {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 },
+      );
+    }
+
+    const { id } = await params;
+    const orgId = Number(id);
+
+    const repo = getOrganizationRepository();
+    const isDeleted = await repo.deleteOrganizationByIdAsyn(orgId);
+
+    if (!isDeleted) {
+      return NextResponse.json(
+        { success: false, message: "Failed to delete!" },
+        { status: 404 },
+      );
+    }
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { success: false, message: "Failed to delete!" },
       { status: 500 },
     );
   }

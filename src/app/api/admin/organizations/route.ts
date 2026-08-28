@@ -1,23 +1,15 @@
 import { authOptions } from "@/auth";
+import { getOrganizationRepository } from "@/di/reposetriesDiI";
 import { requireAdmin } from "@/lib/auth/require-admin";
-import prismaClient from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
     await requireAdmin();
-    const organizations = await prismaClient.organization.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        _count: {
-          select: {
-            users: true,
-            patients: true,
-          },
-        },
-      },
-    });
+    const repo = getOrganizationRepository();
+    const organizations = await repo.getAllOrganizationAsync();
+
     return NextResponse.json({ success: true, data: organizations });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Error";
@@ -47,19 +39,32 @@ export async function POST(req: Request) {
       );
     }
 
-    const organization = await prismaClient.organization.create({
-      data: {
-        name: body.name.trim(),
-        type: body.type || "DEMO",
-        address: body.address || null,
-        phone: body.phone || null,
-        email: body.email || null,
-        isActive: body.isActive ?? true,
-        createdBy: session.user.email || session.user.name || "system",
-      },
+    const repo = getOrganizationRepository();
+
+    const success = await repo.insertOrganizationAsync({
+      name: body.name.trim(),
+      type: body.type || "DEMO",
+      address: body.address || null,
+      phone: body.phone || null,
+      email: body.email || null,
+      isActive: body.isActive ?? true,
+      createdBy: session.user.email || "system",
     });
 
-    return NextResponse.json({ success: true, data: organization });
+    if (!success) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Failed to create organization",
+        },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Organization Created Successfully!",
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

@@ -4,24 +4,11 @@ import { useEffect, useState } from "react";
 import { Plus, Search, Loader2, X, UserRound } from "lucide-react";
 import AdminClinicalData from "@/components/admin/AdminClinicalData";
 import { InitialData } from "@/components/admin/steps/constants";
+import { PatientFullResponseDto } from "@/types/patient.dto";
 
-type PatientRow = {
-  id: number;
-  name: string;
-  email: string;
-  insurancePayer: string;
-  procedureCode: string;
-  procedureName: string;
-  diagnosisCode: string;
-  _count?: {
-    notes: number;
-    medications: number;
-    imagingReports: number;
-  };
-};
 
 export default function PatientsPage() {
-  const [patients, setPatients] = useState<PatientRow[]>([]);
+  const [patients, setPatients] = useState<PatientFullResponseDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,7 +30,7 @@ export default function PatientsPage() {
       if (!res.ok || !json.success) {
         throw new Error(json.message || "Failed to load");
       }
-
+      console.log("API Response Data:", json.data);
       setPatients(json.data ?? []);
       setError(null);
     } catch (err) {
@@ -206,7 +193,7 @@ export default function PatientsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                {patients.length === 0 ? (
+                {!Array.isArray(patients) || patients.length === 0 ? (
                   <tr>
                     <td
                       colSpan={10}
@@ -255,17 +242,20 @@ export default function PatientsPage() {
                       </td>
                       <td className="px-5 py-3 text-center">
                         <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-medium">
-                          {patient._count?.notes ?? 0}
+                          {/* {patient._count?.notes ?? 0} */}
+                          {patient.notes.length ?? 0}
                         </span>
                       </td>
                       <td className="px-5 py-3 text-center">
                         <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-medium">
-                          {patient._count?.medications ?? 0}
+                          {/* {patient._count?.medications ?? 0} */}
+                          {patient.medications.length ?? 0}
                         </span>
                       </td>
                       <td className="px-5 py-3 text-center">
                         <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-medium">
-                          {patient._count?.imagingReports ?? 0}
+                          {patient.imagingReports.length ?? 0}
+                          {/* {patient._count?.imagingReports ?? 0} */}
                         </span>
                       </td>
                       <td className="px-5 py-3">
