@@ -1,13 +1,21 @@
 import {
-  Patient,
-  PatientFullInformation,
-  InsertPatientPayload,
-} from "@/types/patientRecord";
+  InsertPatientFullPayload,
+  PatientFullResponseDto,
+  UpdatePatientFullPayload,
+} from "@/types/patient.dto";
 
 export interface IPatientDataRepository {
-  getPatientByIdAsync(patientId: number): Promise<Patient | null>;
-  insertPatientDataByIdAsync(patientId: number): Promise<null>;
+  /*-----------------------Read Ops ----------------- */
+  getPatientByIdAsync(
+    patientId: number,
+  ): Promise<PatientFullResponseDto | null>;
+  getFullPatientInfoAsync(): Promise<PatientFullResponseDto[] | null>;
+
+  /*-----------------------Write ops----------------- */
+  insertPatientDataAsync(payload: InsertPatientFullPayload): Promise<boolean>;
+  updatePatientDataByIdAsync(
+    patientId: number,
+    payload: UpdatePatientFullPayload,
+  ): Promise<boolean>;
   deletePatientDataByIdAsync(patientId: number): Promise<boolean>;
-  insertPatientDataAsync(payload: InsertPatientPayload): Promise<boolean | false>;
-  getFullPatientInfoAsync(): Promise<PatientFullInformation[] | null>;
 }

@@ -1,5 +1,5 @@
 import { IPatientDataRepository } from "@/lib/interfaces/IRepository/IPatientDataRepository";
-import { PatientDataRepository } from "@/lib/repository/PatientDataRepository";
+import { PatientDataRepository } from "@/repository/PatientDataRepository";
 
 let patientDataRepository: IPatientDataRepository | null = null;
 

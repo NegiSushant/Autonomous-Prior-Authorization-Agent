@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { executePriorAuthorization } from "@/lib/services/prior-auth-service";
+import { executePriorAuthorization } from "@/services/prior-auth-service";
 import { mapAgentResponse } from "@/lib/utils/map-agent-response";
 
 export async function POST(req: NextRequest) {

@@ -1,8 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
-import prismaClient from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { getPatientDataRepository } from "@/di/reposetriesDiI";
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -29,15 +29,8 @@ export async function GET(_req: Request, { params }: Params) {
         { status: 400 },
       );
     }
-
-    const patient = await prismaClient.patient.findUnique({
-      where: { id: patientId },
-      include: {
-        notes: true,
-        medications: true,
-        imagingReports: true,
-      },
-    });
+    const repo = getPatientDataRepository();
+    const patient = await repo.getPatientByIdAsync(patientId);
 
     if (!patient) {
       return NextResponse.json(
@@ -83,11 +76,16 @@ export async function DELETE(req: NextRequest, { params }: Params) {
         { status: 400 },
       );
     }
+    const repo = getPatientDataRepository();
 
-    // Because of onDelete: Cascade in schema, deleting the patient will automatically wipe all their notes, medications, and imaging!
-    await prismaClient.patient.delete({
-      where: { id: patientId },
-    });
+    const isPatientDeleted = await repo.deletePatientDataByIdAsync(patientId);
+
+    if (!isPatientDeleted) {
+      return NextResponse.json({
+        success: false,
+        message: "Failed to Delete Patient records!",
+      });
+    }
 
     return NextResponse.json({
       success: true,
@@ -95,18 +93,12 @@ export async function DELETE(req: NextRequest, { params }: Params) {
     });
   } catch (e) {
     console.error("Delete patient error:", e);
+
     const msg = e instanceof Error ? e.message : "Error";
-
-    // Check if the error is because the patient doesn't exist
-    if (msg.includes("Record to delete does not exist")) {
-      return NextResponse.json(
-        { success: false, message: "Patient not found" },
-        { status: 404 },
-      );
-    }
-
     const status =
       msg === "UNAUTHORIZED" ? 401 : msg === "FORBIDDEN" ? 403 : 500;
     return NextResponse.json({ success: false, message: msg }, { status });
   }
 }
+
+
