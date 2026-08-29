@@ -1,37 +1,33 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
-import { getUserRepository } from "@/di/reposetriesDiI";
+import { requireAuth } from "@/lib/requireAuth";
+import { getUserService } from "@/di/servicesDil";
 
 type Params = { params: Promise<{ id: number }> };
 
 export async function GET(_req: Request, { params }: Params) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    await requireAuth(["SUPERADMIN", "ADMIN"]);
 
     const { id } = await params;
-    const repo = getUserRepository();
-    const user = await repo.getUserByIdAsync(id);
+    const userId = Number(id);
 
-    if (!user) {
-      return NextResponse.json(
-        { success: false, message: "User not found" },
-        { status: 404 },
-      );
-    }
+    const services = getUserService();
+    const userInfo = await services.ListUserInfoById(userId);
 
-    return NextResponse.json({ success: true, data: user });
+    return NextResponse.json({ success: true, data: userInfo });
   } catch (error) {
-    console.error("Error while retrive patient info: ", error);
+    console.error("Error while retrive User info: ", error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
     return NextResponse.json(
-      { success: false, message: "Server error" },
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }
@@ -39,42 +35,16 @@ export async function GET(_req: Request, { params }: Params) {
 
 export async function PUT(req: Request, { params }: Params) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
-
-    const currentUserRole = session.user.role;
-
-    // Only ADMIN and SUPERADMIN can call this endpoint
-    if (currentUserRole !== "ADMIN" && currentUserRole !== "SUPERADMIN") {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    await requireAuth(["SUPERADMIN", "ADMIN"]);
 
     const { id } = await params;
     const userId = Number(id);
     const body = await req.json();
     const { email, password, name, role, organizationId } = body;
 
-    // const data: Record<string, unknown> = {
-    //   email: email?.trim(),
-    //   name: name?.trim() || null,
-    //   role: role || "REVIEWER",
-    //   organizationId: organizationId ? Number(organizationId) : null,
-    // };
+    const services = getUserService();
 
-    // if (password?.trim()) {
-    //   data.password = await bcrypt.hash(password, 10);
-    // }
-
-    const repo = getUserRepository();
-    const user = await repo.updateUserDataByIdAsync(userId, {
+    const user = await services.updateUserDataById(userId, {
       email: email?.trim(),
       name: name?.trim() || null,
       role: role || "REVIEWER",
@@ -83,19 +53,29 @@ export async function PUT(req: Request, { params }: Params) {
 
     if (!user) {
       return NextResponse.json(
-        { success: false, message: "Failed to update user" },
+        { success: false, message: "Failed to update user!" },
         { status: 404 },
       );
     }
 
     return NextResponse.json(
-      { success: true, message: "User updated successfully." },
+      { success: true, message: "User updated successfully!" },
       { status: 200 },
     );
   } catch (error) {
-    console.error(error);
+    console.error("Error while updated User info: ", error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
     return NextResponse.json(
-      { success: false, message: "Failed to update user" },
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }
@@ -103,29 +83,13 @@ export async function PUT(req: Request, { params }: Params) {
 
 export async function DELETE(_req: Request, { params }: Params) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
-
-    const currentUserRole = session.user.role;
-
-    // Only ADMIN and SUPERADMIN can call this endpoint
-    if (currentUserRole !== "ADMIN" && currentUserRole !== "SUPERADMIN") {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    await requireAuth(["SUPERADMIN", "ADMIN"]);
 
     const { id } = await params;
     const userId = Number(id);
-    const repo = getUserRepository();
 
-    const isUserDeleted = await repo.deleteUserDataByIdAsync(userId);
+    const services = getUserService();
+    const isUserDeleted = await services.deleteUserById(userId);
 
     if (!isUserDeleted) {
       return NextResponse.json(
@@ -139,9 +103,19 @@ export async function DELETE(_req: Request, { params }: Params) {
       { status: 200 },
     );
   } catch (error) {
-    console.error(error);
+    console.error("Error while Delete User: ", error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
     return NextResponse.json(
-      { success: false, message: "Failed to delete user" },
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }

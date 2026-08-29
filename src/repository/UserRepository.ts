@@ -30,12 +30,16 @@ export class UserRepository implements IUserRepository {
       return null;
     }
   }
-  async getFullUserInfoAsync(): Promise<UserResponseDto[] | null> {
+
+  async getFullUserInfoAsync(
+    orgId: number | null,
+  ): Promise<UserResponseDto[] | null> {
     try {
-      //   const whereClause = role === "SUPERADMIN" ? {} : { organizationId };
+      const whereClause: { organizationId?: number } =
+        orgId !== null ? { organizationId: orgId } : {};
 
       const users = await prismaClient.user.findMany({
-        // where: whereClause,
+        where: whereClause,
         orderBy: { createdAt: "desc" },
         select: {
           id: true,
@@ -116,7 +120,7 @@ export class UserRepository implements IUserRepository {
       await prismaClient.user.delete({ where: { id: userId } });
       return true;
     } catch (error) {
-        console.error("Error while deleting user: ", error);
+      console.error("Error while deleting user: ", error);
       return false;
     }
   }

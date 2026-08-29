@@ -29,6 +29,13 @@ export interface PriorAuthReviewResponseDto extends IPriorAuthReview {
   reviewer?: Omit<IUser, "password">;
 }
 
+export interface SessionUser {
+  id: number;
+  email: string;
+  role: UserRole;
+  orgId: number | null;
+}
+
 // 4. QUERY PARAMETERS / FILTER DTOs
 export interface GetUsersFilterDto {
   page?: number;

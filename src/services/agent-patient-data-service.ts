@@ -1,4 +1,4 @@
-import { IPatientDataService } from "@/lib/interfaces/IServices/IPatientDataService";
+import { IPatientDataService } from "@/lib/interfaces/IServices/IPatientInfoService";
 
 export class PatientDataService implements IPatientDataService {
   async getPatient(patientId: string) {

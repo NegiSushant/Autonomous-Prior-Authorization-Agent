@@ -200,9 +200,15 @@ export class PatientDataRepository implements IPatientDataRepository {
   /*----------------- Read Ops ----------------------- */
 
   //retrive all patient information
-  async getFullPatientInfoAsync(): Promise<PatientFullResponseDto[] | null> {
+  async getFullPatientInfoAsync(
+    orgId: number | null,
+  ): Promise<PatientFullResponseDto[] | null> {
     try {
+      const whereClause: { organizationId?: number } =
+        orgId !== null ? { organizationId: orgId } : {};
+
       const patients = await prismaClient.patient.findMany({
+        where: whereClause,
         orderBy: { createdAt: "desc" },
         include: {
           notes: true,
@@ -221,10 +227,19 @@ export class PatientDataRepository implements IPatientDataRepository {
   //retrive patient info by patient id
   async getPatientByIdAsync(
     patientId: number,
+    orgId: number | null,
   ): Promise<PatientFullResponseDto | null> {
     try {
+      const whereClause: { id: number; organizationId?: number } = {
+        id: patientId,
+      };
+
+      if (orgId !== null) {
+        whereClause.organizationId = orgId;
+      }
+
       const patientData = await prismaClient.patient.findUnique({
-        where: { id: patientId },
+        where: whereClause,
         include: {
           notes: true,
           medications: true,

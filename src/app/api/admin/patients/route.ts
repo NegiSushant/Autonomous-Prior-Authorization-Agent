@@ -1,28 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth/require-admin";
-import { getPatientDataRepository } from "@/di/reposetriesDiI";
+import { requireAuth } from "@/lib/requireAuth";
+import { getPatientrService } from "@/di/servicesDil";
 
 export async function GET() {
   try {
-    const repo = getPatientDataRepository();
-    const patients = await repo.getFullPatientInfoAsync();
-    console.log(patients);
+    const user = await requireAuth(["ADMIN", "REVIEWER", "SUPERADMIN"]);
+
+    const services = getPatientrService();
+    const patients = await services.PatientInfoList(user);
+
     return NextResponse.json({ success: true, data: patients });
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : "Error";
-    const status =
-      msg === "UNAUTHORIZED" ? 401 : msg === "FORBIDDEN" ? 403 : 500;
-    return NextResponse.json({ success: false, message: msg }, { status });
+  } catch (error: unknown) {
+    console.error("Error while retrive Patient info: ", error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
-    await requireAdmin();
+    await requireAuth(["SUPERADMIN", "ADMIN"]);
     const body = await req.json();
-    const repo = getPatientDataRepository();
 
-    const success = await repo.insertPatientDataAsync({
+    const services = getPatientrService();
+
+    const success = await services.createPatientInfo({
       patient: body.patient,
       notes: body.notes,
       medications: body.medications,
@@ -31,16 +45,30 @@ export async function POST(req: NextRequest) {
 
     if (!success) {
       return NextResponse.json(
-        { success: false, message: "Failed to create patient" },
+        { success: false, message: "Failed to create patient!" },
         { status: 500 },
       );
     }
-    return NextResponse.json({ success: true });
-  } catch (e) {
-    console.error("Bulk create error:", e);
-    const msg = e instanceof Error ? e.message : "Error";
-    const status =
-      msg === "UNAUTHORIZED" ? 401 : msg === "FORBIDDEN" ? 403 : 500;
-    return NextResponse.json({ success: false, message: msg }, { status });
+
+    return NextResponse.json({
+      success: true,
+      message: "Patient created successfully!",
+    });
+  } catch (error: unknown) {
+    console.error("Error while Creating Patient info: ", error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }

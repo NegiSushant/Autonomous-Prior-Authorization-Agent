@@ -1,12 +1,12 @@
 import { authOptions } from "@/auth";
 import { getOrganizationRepository } from "@/di/reposetriesDiI";
-import { requireAdmin } from "@/lib/auth/require-admin";
+import { requireAuth } from "@/lib/requireAuth";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    await requireAdmin();
+    await requireAuth(["ADMIN", "SUPERADMIN"]);
     const repo = getOrganizationRepository();
     const organizations = await repo.getAllOrganizationAsync();
 

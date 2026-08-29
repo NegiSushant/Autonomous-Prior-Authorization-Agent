@@ -1,42 +1,30 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
-import { getUserRepository } from "@/di/reposetriesDiI";
+import { requireAuth } from "@/lib/requireAuth";
+import { getUserService } from "@/di/servicesDil";
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
+    const user = await requireAuth(["SUPERADMIN", "ADMIN"]);
 
-    if (!session?.user) {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    const service = getUserService();
 
-    const role = session.user.role;
-    // const organizationId = session.user.orgId;
-
-    // Only ADMIN and SUPERADMIN can call this endpoint
-    if (role !== "ADMIN" && role !== "SUPERADMIN") {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
-
-    // Build the where clause based on role
-    // const whereClause = role === "SUPERADMIN" ? {} : { organizationId };
-    const repo = getUserRepository();
-
-    const users = await repo.getFullUserInfoAsync();
+    const users = await service.userInfoList(user);
 
     return NextResponse.json({ success: true, data: users });
-  } catch (error) {
-    console.error(error);
+  } catch (error: unknown) {
+    console.error("Error while retrive User info: ", error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
     return NextResponse.json(
-      { success: false, message: "Failed to fetch users" },
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }
@@ -44,23 +32,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
-
-    const currentUserRole = session.user.role;
-
-    // Only ADMIN and SUPERADMIN can call this endpoint
-    if (currentUserRole !== "ADMIN" && currentUserRole !== "SUPERADMIN") {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    await requireAuth(["SUPERADMIN", "ADMIN"]);
 
     const body = await req.json();
     const { email, password, name, role, organizationId } = body;
@@ -71,21 +43,19 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
-    const repo = getUserRepository();
-    const hashed = await bcrypt.hash(password, 10);
 
-
-    const user = await repo.insertUserDataAsync({
+    const services = getUserService();
+    const user = await services.createUser({
       email: email.trim(),
-      password: hashed,
+      password: password,
       name: name?.trim() || null,
       role: role || "REVIEWER",
-      organizationId: organizationId ? Number(organizationId) : null,
+      organizationId: organizationId ? Number(organizationId) : 1,
     });
 
     if (!user) {
       return NextResponse.json(
-        { success: false, message: "Failed to create user" },
+        { success: false, message: "Failed to create user!" },
         { status: 404 },
       );
     }
@@ -94,10 +64,20 @@ export async function POST(req: Request) {
       { success: true, message: "User created successfully!" },
       { status: 200 },
     );
-  } catch (error) {
-    console.error(error);
+  } catch (error: unknown) {
+    console.error("Error while creating User: ", error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
     return NextResponse.json(
-      { success: false, message: "Failed to create user" },
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }
