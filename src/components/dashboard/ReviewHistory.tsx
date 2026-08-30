@@ -16,7 +16,7 @@ import {
 } from "@/types/prior-auth-response";
 
 interface ReviewHistoryProps {
-  patientId?: string; // optional – if provided, filters to that patient
+  patientId?: number; // optional – if provided, filters to that patient
 }
 
 const decisionStyles: Record<

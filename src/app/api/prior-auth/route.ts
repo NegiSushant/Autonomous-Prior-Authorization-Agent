@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { executePriorAuthorization } from "@/services/prior-auth-service";
 import { mapAgentResponse } from "@/lib/utils/map-agent-response";
+import { requireAuth } from "@/lib/requireAuth";
 
 export async function POST(req: NextRequest) {
   try {
+    // const userSession = await requireAuth(["ADMIN", "SUPERADMIN", "REVIEWER"]);
     const body = await req.json();
     const { patientId } = body;
+
+    // const patientId = Number(id);
+
     if (!patientId) {
       return NextResponse.json(
         {
@@ -19,7 +24,9 @@ export async function POST(req: NextRequest) {
     }
 
     // const result = await executePriorAuthorization(patientId);
-    const state = await executePriorAuthorization(patientId);
+    // const state = await executePriorAuthorization(patientId, userSession);
+    const state = await executePriorAuthorization(String(patientId));
+    console.log(`Agent state: ${state}`)
     const response = mapAgentResponse(state);
     return NextResponse.json({
       success: true,

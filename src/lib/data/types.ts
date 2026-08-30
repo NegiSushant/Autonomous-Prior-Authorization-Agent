@@ -7,7 +7,7 @@ export interface ClinicalEvidenceRow {
 }
 
 export interface PatientRecord {
-  patientId: string;
+  patientId: number;
   name: string;
   insurancePayer: string;
   procedureCode: string;

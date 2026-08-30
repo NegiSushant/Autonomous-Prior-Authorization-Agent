@@ -6,7 +6,7 @@ import {
 } from "./types";
 
 function toPatient(p: {
-  id: string;
+  id: number;
   name: string;
   insurancePayer: string;
   procedureCode: string;
@@ -26,7 +26,7 @@ function toPatient(p: {
 export class PostgresDataService implements IPatientDataService {
   async getPatient(patientId: string) {
     const p = await prismaClient.patient.findUnique({
-      where: { id: patientId },
+      where: { id: Number(patientId) },
     });
     return p ? toPatient(p) : null;
   }
@@ -46,7 +46,7 @@ export class PostgresDataService implements IPatientDataService {
       .filter(Boolean);
 
     const notes = await prismaClient.clinicalNote.findMany({
-      where: { patientId },
+      where: { patientId: Number(patientId) },
       orderBy: { noteDate: "desc" },
     });
 
@@ -71,7 +71,7 @@ export class PostgresDataService implements IPatientDataService {
   async searchMedications(patientId: string, medicationCategory: string) {
     const category = medicationCategory.toLowerCase();
     const rows = await prismaClient.medicationRecord.findMany({
-      where: { patientId },
+      where: { patientId: Number(patientId) },
       orderBy: { recordDate: "desc" },
     });
 
@@ -95,7 +95,7 @@ export class PostgresDataService implements IPatientDataService {
   async searchImaging(patientId: string, bodyPart: string) {
     const part = bodyPart.toLowerCase();
     const rows = await prismaClient.imagingReport.findMany({
-      where: { patientId },
+      where: { patientId: Number(patientId) },
       orderBy: { reportDate: "desc" },
     });
 
