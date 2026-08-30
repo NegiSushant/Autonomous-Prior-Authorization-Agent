@@ -7,7 +7,9 @@ import { IOrganizations } from "@/types/organizations.entity";
 
 export interface IOrganizationsRepository {
   // read ops
-  getAllOrganizationAsync(): Promise<OrganizationWithCountsDto[] | null>;
+  getAllOrganizationAsync(
+    orgId: number | null,
+  ): Promise<OrganizationWithCountsDto[] | null>;
   getOrganizationByIdAsync(orgId: number): Promise<IOrganizations | null>;
 
   // write ops

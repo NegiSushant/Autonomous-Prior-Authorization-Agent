@@ -1,34 +1,35 @@
-import { authOptions } from "@/auth";
-import { getOrganizationRepository } from "@/di/reposetriesDiI";
-import { requireAuth } from "@/lib/requireAuth";
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { getOrganizationsService } from "@/di/servicesDil";
+import { requireAuth } from "@/lib/requireAuth";
 
 export async function GET() {
   try {
-    await requireAuth(["ADMIN", "SUPERADMIN"]);
-    const repo = getOrganizationRepository();
-    const organizations = await repo.getAllOrganizationAsync();
+    const sessionUser = await requireAuth(["ADMIN", "SUPERADMIN"]);
+
+    const services = getOrganizationsService();
+    const organizations = await services.listOrganizations(sessionUser);
 
     return NextResponse.json({ success: true, data: organizations });
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : "Error";
-    const status =
-      msg === "UNAUTHORIZED" ? 401 : msg === "FORBIDDEN" ? 403 : 500;
-    return NextResponse.json({ success: false, message: msg }, { status });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    const sessionUser = await requireAuth(["SUPERADMIN"]);
 
     const body = await req.json();
 
@@ -39,16 +40,16 @@ export async function POST(req: Request) {
       );
     }
 
-    const repo = getOrganizationRepository();
+    const services = getOrganizationsService();
 
-    const success = await repo.insertOrganizationAsync({
+    const success = await services.createNewOrganization({
       name: body.name.trim(),
       type: body.type || "DEMO",
       address: body.address || null,
       phone: body.phone || null,
       email: body.email || null,
       isActive: body.isActive ?? true,
-      createdBy: session.user.email || "system",
+      createdBy: sessionUser.email || "system",
     });
 
     if (!success) {
@@ -65,10 +66,20 @@ export async function POST(req: Request) {
       success: true,
       message: "Organization Created Successfully!",
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
     return NextResponse.json(
-      { success: false, message: "Failed to create organization" },
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }

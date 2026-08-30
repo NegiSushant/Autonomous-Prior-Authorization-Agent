@@ -9,9 +9,14 @@ import { IOrganizations } from "@/types/organizations.entity";
 
 export class OrganizationRepository implements IOrganizationsRepository {
   // read ops
-  async getAllOrganizationAsync(): Promise<OrganizationWithCountsDto[] | null> {
+  async getAllOrganizationAsync(
+    orgId: number | null,
+  ): Promise<OrganizationWithCountsDto[] | null> {
     try {
+      const whereClause: { id?: number } = orgId !== null ? { id: orgId } : {};
+
       const orgs = await prismaClient.organization.findMany({
+        where: whereClause,
         orderBy: { createdAt: "desc" },
         include: {
           _count: {
