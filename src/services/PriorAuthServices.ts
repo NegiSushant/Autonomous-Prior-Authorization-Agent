@@ -2,7 +2,7 @@ import { IPriorAuthService } from "@/lib/interfaces/IServices/IPriorAuthServices
 import { SessionUser } from "@/types/users.dto";
 import { paGraph as graph } from "@/lib/graph/graph";
 import { retrievePolicyRules } from "@/lib/policy/retrieve-policy-rules";
-import { PAAgentState } from "@/lib/schemas/state";
+import { PAAgentState } from "@/types/agentState.dto";
 import { IPatientDataRepository } from "@/lib/interfaces/IRepository/IPatientDataRepository";
 import { getPatientDataRepository } from "@/di/reposetriesDiI";
 
@@ -46,7 +46,7 @@ export class PriorAuthServices implements IPriorAuthService {
 
       const initialState: PAAgentState = {
         patientDetails: {
-          patientId: String(patient.id),
+          patientId: patient.id,
           procedureCode: patient.procedureCode,
           procedureName: patient.procedureName,
           diagnosisCode: patient.diagnosisCode,

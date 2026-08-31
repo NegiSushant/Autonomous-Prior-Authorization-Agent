@@ -3,6 +3,7 @@ import {
   PatientFullResponseDto,
   UpdatePatientFullPayload,
 } from "@/types/patient.dto";
+import { IClinicalNote, IImagingReport, IMedicationRecord } from "@/types/patient.entity";
 
 export interface IPatientDataRepository {
   /*-----------------------Read Ops ----------------- */
@@ -14,6 +15,12 @@ export interface IPatientDataRepository {
   getFullPatientInfoAsync(
     orgId: number | null,
   ): Promise<PatientFullResponseDto[] | null>;
+
+  getEHRNoteData(patientId: number): Promise<IClinicalNote[] | null>;
+
+  getPharmacyRecord(patientId: number): Promise<IMedicationRecord[] | null>;
+
+  getImagingData(patientId: number): Promise<IImagingReport[] | null>;
 
   /*-----------------------Write ops----------------- */
   insertPatientDataAsync(payload: InsertPatientFullPayload): Promise<boolean>;

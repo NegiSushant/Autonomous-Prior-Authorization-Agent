@@ -5,6 +5,11 @@ import {
   PatientFullResponseDto,
   UpdatePatientFullPayload,
 } from "@/types/patient.dto";
+import {
+  IClinicalNote,
+  IImagingReport,
+  IMedicationRecord,
+} from "@/types/patient.entity";
 
 export class PatientDataRepository implements IPatientDataRepository {
   /*------------------ Write Ops------------- */
@@ -250,6 +255,44 @@ export class PatientDataRepository implements IPatientDataRepository {
       return patientData;
     } catch (error) {
       console.error("Failed to fetch patient:", error);
+      return null;
+    }
+  }
+
+  async getEHRNoteData(patientId: number): Promise<IClinicalNote[] | null> {
+    try {
+      const PatientNote = await prismaClient.clinicalNote.findMany({
+        where: { patientId: patientId },
+      });
+      return PatientNote;
+    } catch (error) {
+      console.error("Failed to fetch EHR notes:", error);
+      return null;
+    }
+  }
+
+  async getPharmacyRecord(
+    patientId: number,
+  ): Promise<IMedicationRecord[] | null> {
+    try {
+      const pharmaRecords = await prismaClient.medicationRecord.findMany({
+        where: { patientId: patientId },
+      });
+      return pharmaRecords;
+    } catch (error) {
+      console.error("Failed to fetch Pharma or medical records:", error);
+      return null;
+    }
+  }
+
+  async getImagingData(patientId: number): Promise<IImagingReport[] | null> {
+    try {
+      const imageRecods = await prismaClient.imagingReport.findMany({
+        where: { patientId: patientId },
+      });
+      return imageRecods;
+    } catch (error) {
+      console.error("Failed to fetch Imaging notes:", error);
       return null;
     }
   }

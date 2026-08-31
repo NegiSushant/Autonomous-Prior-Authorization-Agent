@@ -9,7 +9,7 @@ const RecommendationStatusSchema = z.enum([
 const CriteriaStatusSchema = z.enum(["Met", "Not Met", "Unclear"]);
 
 const CriteriaEvidenceSchema = z.object({
-  date: z.string(),
+  date: z.date(),
   snippet: z.string(),
   sourceType: z.enum(["EHR", "Pharmacy", "Imaging"]),
   documentId: z.string().optional(),
@@ -24,7 +24,7 @@ const CriteriaBreakdownSchema = z.object({
   overrideJustification: z.string().optional(),
 });
 
-const FinalBriefingSchema = z.object({
+export const FinalBriefingSchema = z.object({
   recommendationStatus: RecommendationStatusSchema,
   rationale: z.string(),
   criteriaBreakdown: z.array(CriteriaBreakdownSchema),
@@ -35,13 +35,12 @@ const FinalBriefingSchema = z.object({
 export type FinalBriefing = z.infer<typeof FinalBriefingSchema>;
 
 const EvidenceSourceSchema = z.enum(["EHR", "Pharmacy", "Imaging"]);
-
 const EvidenceStatusSchema = z.enum(["Met", "Not Met", "Unclear"]);
 
 export const ClinicalEvidenceSchema = z.object({
   sourceType: EvidenceSourceSchema,
   documentId: z.string(),
-  dateFound: z.string(),
+  dateFound: z.date(),
   status: EvidenceStatusSchema,
   snippetText: z.string(),
 });
@@ -49,7 +48,7 @@ export const ClinicalEvidenceSchema = z.object({
 export type ClinicalEvidence = z.infer<typeof ClinicalEvidenceSchema>;
 
 export const PriorAuthRequestSchema = z.object({
-  patientId: z.string().min(1),
+  patientId: z.number(),
   procedureCode: z.string(),
   procedureName: z.string(),
   diagnosisCode: z.string(),
