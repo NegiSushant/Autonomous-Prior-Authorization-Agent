@@ -1,7 +1,5 @@
-// src/lib/graph/nodes/formatter.ts
 import { AIMessage, HumanMessage, ToolMessage } from "@langchain/core/messages";
-import { FinalBriefing } from "@/lib/schemas/briefing";
-import { PAAgentState } from "@/lib/schemas/state";
+import { FinalBriefing, PAAgentState } from "@/types/agentState.dto";
 
 type CriterionStatus = "Met" | "Not Met" | "Unclear";
 

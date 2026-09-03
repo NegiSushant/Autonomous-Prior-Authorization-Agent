@@ -18,12 +18,12 @@ export interface PolicyRetrievalResult {
   sourceFiles: string[];
 }
 
-async function embedQuery(text: string): Promise<number[]> {
+export async function embedQuery(text: string): Promise<number[]> {
   const res = await openai.embedQuery(text);
   return res;
 }
 
-function toBullets(text: string, max = 4): string[] {
+export function toBullets(text: string, max = 4): string[] {
   const lines = text
     .split("\n")
     .map((l) => l.trim())
@@ -89,9 +89,14 @@ export async function retrievePolicyRules(params: {
   // Light metadata boost
   const scored = rows.map((r) => {
     let score = 1 - Number(r.distance);
-    if (r.insurance?.toLowerCase().includes(insurance.toLowerCase())) score += 0.25;
+    if (r.insurance?.toLowerCase().includes(insurance.toLowerCase()))
+      score += 0.25;
     if (cpt_code && r.content.includes(cpt_code)) score += 0.2;
-    if (r.procedure?.toLowerCase().includes(procedure.toLowerCase().split(" ")[0] ?? "")) {
+    if (
+      r.procedure
+        ?.toLowerCase()
+        .includes(procedure.toLowerCase().split(" ")[0] ?? "")
+    ) {
       score += 0.15;
     }
     return { ...r, score };

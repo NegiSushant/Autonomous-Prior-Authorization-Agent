@@ -1,17 +1,7 @@
 import { AIMessage, HumanMessage, ToolMessage } from "@langchain/core/messages";
 import { PAAgentState } from "@/lib/schemas/state";
+import { FailedToolCall, ParsedToolResult } from "@/types/tools.dto";
 
-interface ParsedToolResult {
-  success: boolean;
-  results: unknown[];
-  message?: string;
-}
-
-interface FailedToolCall {
-  toolName: string;
-  args: Record<string, unknown>;
-  reason: "empty" | "failed";
-}
 
 export async function reflectNode(
   state: PAAgentState,

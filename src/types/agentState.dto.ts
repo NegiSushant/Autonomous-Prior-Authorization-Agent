@@ -1,5 +1,6 @@
 import { BaseMessage } from "@langchain/core/messages";
 import { z } from "zod";
+import { CriterionEvaluation, EvidenceItem, ExecutionStep } from "./tools.dto";
 
 const RecommendationStatusSchema = z.enum([
   "Auto-Approved",
@@ -72,4 +73,13 @@ export interface PAAgentState {
   status: z.infer<typeof AgentStatusSchema>;
   messages: BaseMessage[];
   finalReport?: FinalBriefing;
+}
+
+export interface PriorAuthResponse {
+  patientId: number;
+  status: string;
+  recommendation: string;
+  criteria: CriterionEvaluation[];
+  gatheredEvidence: EvidenceItem[];
+  executionTrace: ExecutionStep[];
 }

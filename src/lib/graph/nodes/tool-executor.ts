@@ -1,31 +1,9 @@
 import { AIMessage, ToolMessage } from "@langchain/core/messages";
-import { PAAgentState } from "@/lib/schemas/state";
 import { search_ehr_notes } from "@/lib/tools/EHRNotes";
 import { search_pharmacy_records } from "@/lib/tools/PharmacyRecords";
 import { search_imaging_history } from "@/lib/tools/ImagingHistory";
-
-interface ToolResult {
-  success: boolean;
-  patientId?: string;
-  results: Array<{
-    documentId: string;
-    date: string;
-    text?: string;
-    report?: string;
-    medication?: string;
-  }>;
-  message?: string;
-  error?: string;
-}
-
-interface ToolErrorResult {
-  success: false;
-  patientId?: string;
-  results: [];
-  message: string;
-  error: string;
-  tool: string;
-}
+import { PAAgentState } from "@/types/agentState.dto";
+import { ToolErrorResult, ToolResult } from "@/types/tools.dto";
 
 export async function toolExecutorNode(
   state: PAAgentState,
@@ -163,7 +141,6 @@ function mapToolToSource(toolName: string): "EHR" | "Pharmacy" | "Imaging" {
       return "EHR";
   }
 }
-
 
 // Convert unknown caught error into a safe message
 function getToolErrorMessage(error: unknown): string {
