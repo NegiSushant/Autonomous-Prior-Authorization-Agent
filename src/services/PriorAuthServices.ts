@@ -32,6 +32,7 @@ export class PriorAuthServices implements IPriorAuthService {
         patientId,
         orgId,
       );
+      console.log(`patient data retrive: ${patient}`);
 
       if (!patient) {
         throw new Error(`Patient '${patientId}' not found.`);
@@ -84,9 +85,12 @@ export class PriorAuthServices implements IPriorAuthService {
       };
 
       const result = await graph.invoke(initialState);
+      console.log(`graph invoked: ${result}`);
       return result;
     } catch (error) {
-      console.error(error);
+      console.error(
+        `Failed in the executePriorAuthorization function excution: ${error}`,
+      );
       return null;
     }
   }
@@ -159,7 +163,7 @@ export class PriorAuthServices implements IPriorAuthService {
           }
         }
       }
-
+      console.log(`data retrival function excuted!`);
       return {
         insurance,
         procedure,
@@ -168,7 +172,7 @@ export class PriorAuthServices implements IPriorAuthService {
         sourceFiles: [...sources],
       };
     } catch (error) {
-      console.error(error);
+      console.error(`Error in the retrival function excuttions: ${error}`);
       return null;
     }
   }
@@ -247,6 +251,7 @@ export class PriorAuthServices implements IPriorAuthService {
       // BUILD CRITERIA EVALUATION
       const criteria = buildCriteria(state);
       // FINAL RESPONSE
+      console.log(`Agent response maped success fully!`);
       return {
         patientId: state.patientDetails.patientId,
         status: state.status,
@@ -256,7 +261,7 @@ export class PriorAuthServices implements IPriorAuthService {
         executionTrace,
       };
     } catch (error) {
-      console.error(`error while maping agent response: ${error}`)
+      console.error(`error while maping agent response: ${error}`);
       return null;
     }
   }

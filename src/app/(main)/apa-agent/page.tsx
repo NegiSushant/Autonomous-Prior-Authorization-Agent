@@ -4,7 +4,8 @@ import { useState } from "react";
 import PatientTable from "@/components/dashboard/PatientTable";
 import RecommendationPanel from "@/components/dashboard/RecommendationPanel";
 import ReviewHistory from "@/components/dashboard/ReviewHistory";
-import { PriorAuthResponse } from "@/types/prior-auth-response";
+import { PriorAuthResponse } from "@/types/agentState.dto";
+// import { PriorAuthResponse } from "@/types/prior-auth-response";
 
 export default function Home() {
   const [patientId, setPatientId] = useState<number | null>(null);
