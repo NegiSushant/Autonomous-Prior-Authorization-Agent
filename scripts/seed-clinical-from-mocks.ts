@@ -2,8 +2,8 @@ console.log("🔥 seed-clinical-from-mocks.ts STARTED");
 
 import "dotenv/config";
 import patients from "../src/mocks/patients.json";
-import prismaClient from "@/lib/prisma";
-// import prismaClient from "../src/lib/prisma";
+// import prismaClient from "@/lib/prisma";
+import prismaClient from "../src/lib/prisma";
 
 console.log("🔥 Imports completed");
 console.log("🔥 Number of patients:", patients.length);
