@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ExternalLink, FileText, X } from "lucide-react";
-import { EvidenceItem } from "@/types/prior-auth-response";
+import { EvidenceItem } from "@/types/tools.dto";
 
 interface EvidencePanelProps {
   evidence: EvidenceItem[];
@@ -90,7 +90,8 @@ export default function EvidencePanel({ evidence }: EvidencePanelProps) {
                     </span>
 
                     <span className="text-sm text-gray-500 dark:text-slate-400">
-                      {item.dateFound}
+                      {/* {item.dateFound} */}
+                      {formatDate(item.dateFound)}
                     </span>
                   </div>
                 </div>
@@ -149,7 +150,8 @@ export default function EvidencePanel({ evidence }: EvidencePanelProps) {
                   </p>
 
                   <p className="mt-1 font-semibold text-gray-900 dark:text-white">
-                    {selectedEvidence.dateFound}
+                    {/* {selectedEvidence.dateFound} */}
+                    {formatDate(selectedEvidence.dateFound)}
                   </p>
                 </div>
               </div>
@@ -201,3 +203,15 @@ export default function EvidencePanel({ evidence }: EvidencePanelProps) {
     </>
   );
 }
+
+const formatDate = (date: Date | string | null | undefined) => {
+  if (!date) return "N/A";
+
+  const parsedDate = date instanceof Date ? date : new Date(date);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return "N/A";
+  }
+
+  return parsedDate.toLocaleDateString();
+};

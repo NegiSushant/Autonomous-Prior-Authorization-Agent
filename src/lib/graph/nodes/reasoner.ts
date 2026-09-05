@@ -1,10 +1,10 @@
 import { llm } from "@/lib/agents/openaiLLM";
+import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { REASONER_SYSTEM_PROMPT } from "@/lib/prompts/reasoner";
-import { PAAgentState } from "@/lib/schemas/state";
+import { PAAgentState } from "@/types/agentState.dto";
 import { search_ehr_notes } from "@/lib/tools/EHRNotes";
 import { search_imaging_history } from "@/lib/tools/ImagingHistory";
 import { search_pharmacy_records } from "@/lib/tools/PharmacyRecords";
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 
 const reasonerLLM = llm.bindTools([
   search_ehr_notes,

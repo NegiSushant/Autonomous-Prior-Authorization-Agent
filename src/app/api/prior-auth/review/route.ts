@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prismaClient from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
-import { PriorAuthReviewPayload } from "@/types/prior-auth-response";
+import { PriorAuthReviewPayload } from "@/types/priorAuthResponse.dto";
 
 export async function POST(req: NextRequest) {
   try {
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
 
     const review = await prismaClient.priorAuthReview.create({
       data: {
-        patientId: body.agentResult.patientId,
+        patientId: Number(body.agentResult.patientId),
         agentRecommendation: body.agentResult.recommendation,
         agentStatus: body.agentResult.status,
         finalDecision: body.decision,
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const patientId = searchParams.get("patientId");
+    const patientId = Number(searchParams.get("patientId"));
 
     const reviews = await prismaClient.priorAuthReview.findMany({
       where: patientId ? { patientId } : undefined,

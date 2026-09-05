@@ -1,8 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
-import prismaClient from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
-import { requireAdmin } from "@/lib/auth/require-admin";
+import { requireAuth } from "@/lib/requireAuth";
+import { getPatientrService } from "@/di/servicesDil";
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -10,19 +8,11 @@ type Params = {
 
 export async function GET(_req: Request, { params }: Params) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    const user = await requireAuth(["ADMIN", "SUPERADMIN", "REVIEWER"]);
 
     const { id } = await params;
     const patientId = Number(id);
 
-    // 2. Validate that it's actually a number
     if (isNaN(patientId)) {
       return NextResponse.json(
         { success: false, message: "Invalid patient ID format" },
@@ -30,14 +20,8 @@ export async function GET(_req: Request, { params }: Params) {
       );
     }
 
-    const patient = await prismaClient.patient.findUnique({
-      where: { id: patientId },
-      include: {
-        notes: true,
-        medications: true,
-        imagingReports: true,
-      },
-    });
+    const services = getPatientrService();
+    const patient = await services.PatientInfoById(patientId, user);
 
     if (!patient) {
       return NextResponse.json(
@@ -63,10 +47,67 @@ export async function GET(_req: Request, { params }: Params) {
         imaging: patient.imagingReports,
       },
     });
-  } catch (error) {
-    console.error("GET /api/admin/patients/[id] error:", error);
+  } catch (error: unknown) {
+    console.error("Error while retrive Patient info: ", error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
     return NextResponse.json(
-      { success: false, message: "Server error" },
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function PUT(req: NextRequest, { params }: Params) {
+  try {
+    await requireAuth(["SUPERADMIN", "ADMIN"]);
+
+    const { id } = await params;
+    const userId = Number(id);
+    const body = await req.json();
+
+    const services = getPatientrService();
+
+    const isPatientUpdated = await services.updatePatientInfoById(userId, {
+      patient: body.patient,
+      notes: body.notes,
+      medications: body.medications,
+      imaging: body.imaging,
+    });
+
+    if (!isPatientUpdated) {
+      return NextResponse.json(
+        { success: false, message: "Failed to update user!" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, message: "User updated successfully!" },
+      { status: 200 },
+    );
+  } catch (error: unknown) {
+    console.error("Error while Editing Patient info: ", error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
+    return NextResponse.json(
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }
@@ -74,7 +115,8 @@ export async function GET(_req: Request, { params }: Params) {
 
 export async function DELETE(req: NextRequest, { params }: Params) {
   try {
-    await requireAdmin();
+    await requireAuth(["ADMIN", "SUPERADMIN"]);
+
     const patientId = Number((await params).id);
 
     if (isNaN(patientId)) {
@@ -84,29 +126,35 @@ export async function DELETE(req: NextRequest, { params }: Params) {
       );
     }
 
-    // Because of onDelete: Cascade in schema, deleting the patient will automatically wipe all their notes, medications, and imaging!
-    await prismaClient.patient.delete({
-      where: { id: patientId },
-    });
+    const services = getPatientrService();
+    const isPatientDeleted = await services.deletePatientDataById(patientId);
+
+    if (!isPatientDeleted) {
+      return NextResponse.json({
+        success: false,
+        message: "Failed to Delete Patient records!",
+      });
+    }
 
     return NextResponse.json({
       success: true,
-      message: "Patient and all related records deleted successfully.",
+      message: "Patient records deleted successfully!",
     });
-  } catch (e) {
-    console.error("Delete patient error:", e);
-    const msg = e instanceof Error ? e.message : "Error";
+  } catch (error: unknown) {
+    console.error("Error while deleting Patient info: ", error);
 
-    // Check if the error is because the patient doesn't exist
-    if (msg.includes("Record to delete does not exist")) {
-      return NextResponse.json(
-        { success: false, message: "Patient not found" },
-        { status: 404 },
-      );
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
     }
 
-    const status =
-      msg === "UNAUTHORIZED" ? 401 : msg === "FORBIDDEN" ? 403 : 500;
-    return NextResponse.json({ success: false, message: msg }, { status });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }

@@ -10,12 +10,12 @@ import {
 } from "lucide-react";
 import ExecutionTraceDrawer from "./ExecutionTraceDrawer";
 import EvidenceDrawer from "./EvidenceDrawer";
+import { PriorAuthResponse } from "@/types/agentState.dto";
 import {
+  CriterionEvaluation,
   EvidenceItem,
   ExecutionStep,
-  CriterionEvaluation,
-  PriorAuthResponse,
-} from "@/types/prior-auth-response";
+} from "@/types/tools.dto";
 
 interface RecommendationPanelProps {
   result: PriorAuthResponse;
@@ -50,11 +50,10 @@ export default function RecommendationPanel({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
-  
+
   const finalRecommendation = trace.find(
     (step) => step.type === "reasoner" && step.title === "Final Recommendation",
   );
-
 
   // Recommendation Colors
   const isApproved = recommendation.toLowerCase().includes("approved");

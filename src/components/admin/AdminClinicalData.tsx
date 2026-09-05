@@ -203,7 +203,12 @@ export default function AdminClinicalData({
           .map((i) => ({ ...i, sourceType: "Imaging" })),
       };
 
-      const res = await fetch("/api/admin/patients", {
+      const endpoint =
+        mode === "edit" && data.patient.id
+          ? `/api/admin/patients/${data.patient.id}`
+          : "/api/admin/patients";
+
+      const res = await fetch(endpoint, {
         method: mode === "edit" ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -215,7 +220,10 @@ export default function AdminClinicalData({
 
       setMessage({
         type: "success",
-        text: "All records successfully saved in bulk!",
+        text:
+          mode === "edit"
+            ? "Patient records successfully updated!"
+            : "All records successfully saved in bulk!",
       });
 
       if (mode === "create") {

@@ -37,7 +37,8 @@ export default function ProfileDropdown() {
   const userName = session?.user?.name || "User Account";
   const userEmail = session?.user?.email || "user@authguardian.ai";
   const userInitials = userName.substring(0, 2).toUpperCase();
-  const isAdmin = session?.user?.role === "ADMIN";
+  const isAdmin =
+    session?.user?.role === "ADMIN" || session?.user?.role === "SUPERADMIN";
 
   return (
     <div className="relative" ref={dropdownRef}>

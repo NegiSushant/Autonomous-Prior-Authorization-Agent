@@ -2,7 +2,7 @@
 
 import { X } from "lucide-react";
 import ExecutionTrace from "./ExecutionTrace";
-import { ExecutionStep } from "@/types/prior-auth-response";
+import { ExecutionStep } from "@/types/tools.dto";
 
 interface ExecutionTraceDrawerProps {
   open: boolean;

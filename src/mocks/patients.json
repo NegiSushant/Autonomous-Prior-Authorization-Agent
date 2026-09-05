@@ -6,6 +6,7 @@
     "procedureName": "MRI Lumbar Spine Without Contrast",
     "diagnosisCode": "M54.5",
     "insurancePayer": "Blue Cross Blue Shield",
+    "organizationId": 1,
 
     "diagnosis": "Low back pain",
 
@@ -53,6 +54,7 @@
     "procedureName": "MRI Lumbar Spine Without Contrast",
     "diagnosisCode": "M54.5",
     "insurancePayer": "Blue Cross Blue Shield",
+    "organizationId": 1,
 
     "diagnosis": "Low back pain",
 
@@ -77,6 +79,7 @@
     "procedureName": "MRI Lumbar Spine Without Contrast",
     "diagnosisCode": "M54.5",
     "insurancePayer": "Blue Cross Blue Shield",
+    "organizationId": 1,
 
     "diagnosis": "Low back pain",
 
@@ -108,6 +111,7 @@
     "diagnosisCode": "M54.5",
     "insurancePayer": "Blue Cross Blue Shield",
     "diagnosis": "Low back pain",
+    "organizationId": 1,
     "ehrNotes": [
       {
         "date": "2026-01-10",
@@ -139,6 +143,7 @@
     "diagnosisCode": "M54.5",
     "insurancePayer": "Blue Cross Blue Shield",
     "diagnosis": "Low back pain",
+    "organizationId": 1,
     "ehrNotes": [
       {
         "date": "2026-01-05",
@@ -175,6 +180,172 @@
         "category": "Pain Medication",
         "date": "2026-01-15",
         "documentId": "RX-PAT005-001"
+      }
+    ]
+  },
+
+  {
+    "status": "completed",
+    "criteria": [
+      {
+        "id": "criterion-1",
+        "criterion": "Outpatient Lumbar Spine Magnetic Resonance Imaging (MRI)",
+        "satisfied": false,
+        "explanation": "Some clinical evidence was collected, but it does not clearly satisfy this retrieved policy criterion."
+      },
+      {
+        "id": "criterion-2",
+        "criterion": "Coverage for outpatient lumbar spine MRI is provided for members who meet the medical necessity criteria below. Prior authorization is required.",
+        "satisfied": false,
+        "explanation": "Some clinical evidence was collected, but it does not clearly satisfy this retrieved policy criterion."
+      },
+      {
+        "id": "criterion-3",
+        "criterion": "ALL requests for MRIs MUST be ordered by a M.D. or D.O. assuming responsibility for management of the patient.",
+        "satisfied": false,
+        "explanation": "Ordering clinician (M.D./D.O.) was not established from the available evidence."
+      },
+      {
+        "id": "criterion-4",
+        "criterion": "For non-red flag conditions, MRI may be appropriate after 1 month of symptoms and failure of conservative treatment.",
+        "satisfied": false,
+        "explanation": "Conflicting evidence is present regarding physical therapy / conservative treatment. Conflicting clinical evidence cannot be reconciled automatically."
+      },
+      {
+        "id": "criterion-5",
+        "criterion": "A lumbar MRI used to evaluate uncomplicated degenerative disc disease or herniated nucleus pulposus is not considered medically necessary when a surgical intervention or other aggr",
+        "satisfied": false,
+        "explanation": "Some clinical evidence was collected, but it does not clearly satisfy this retrieved policy criterion."
+      }
+    ],
+    "patientId": 5,
+    "executionTrace": [
+      {
+        "type": "reasoner",
+        "title": "Reasoning",
+        "content": "Agent decided to invoke one or more tools."
+      },
+      {
+        "type": "tool",
+        "title": "Tool Invocation",
+        "content": "search_ehr_notes",
+        "toolName": "search_ehr_notes",
+        "toolArguments": {
+          "keywords": "lumbar pain",
+          "patientId": 5
+        }
+      },
+      {
+        "type": "tool",
+        "title": "Tool Invocation",
+        "content": "search_ehr_notes",
+        "toolName": "search_ehr_notes",
+        "toolArguments": {
+          "keywords": "physical therapy",
+          "patientId": 5
+        }
+      },
+      {
+        "type": "tool",
+        "title": "Tool Invocation",
+        "content": "search_ehr_notes",
+        "toolName": "search_ehr_notes",
+        "toolArguments": {
+          "keywords": "MRI order",
+          "patientId": 5
+        }
+      },
+      {
+        "type": "tool",
+        "title": "Tool Invocation",
+        "content": "search_ehr_notes",
+        "toolName": "search_ehr_notes",
+        "toolArguments": {
+          "keywords": "surgery",
+          "patientId": 5
+        }
+      },
+      {
+        "type": "tool",
+        "title": "Tool Result",
+        "content": "search_ehr_notes",
+        "toolName": "search_ehr_notes",
+        "toolResult": {
+          "results": [],
+          "success": true,
+          "patientId": 5
+        }
+      },
+      {
+        "type": "tool",
+        "title": "Tool Result",
+        "content": "search_ehr_notes",
+        "toolName": "search_ehr_notes",
+        "toolResult": {
+          "results": [
+            {
+              "date": "2026-01-10T00:00:00.000Z",
+              "text": "Patient refused physical therapy.",
+              "documentId": "EHR-PAT004-001"
+            },
+            {
+              "date": "2026-02-25T00:00:00.000Z",
+              "text": "Patient completed 6 weeks of physical therapy.",
+              "documentId": "EHR-PAT004-002"
+            }
+          ],
+          "success": true,
+          "patientId": 5
+        }
+      },
+      {
+        "type": "tool",
+        "title": "Tool Result",
+        "content": "search_ehr_notes",
+        "toolName": "search_ehr_notes",
+        "toolResult": {
+          "results": [],
+          "success": true,
+          "patientId": 5
+        }
+      },
+      {
+        "type": "tool",
+        "title": "Tool Result",
+        "content": "search_ehr_notes",
+        "toolName": "search_ehr_notes",
+        "toolResult": {
+          "results": [],
+          "success": true,
+          "patientId": 5
+        }
+      },
+      {
+        "type": "reflection",
+        "title": "Reflection",
+        "content": "The latest tool searches did not return useful evidence.\n\nThe search_ehr_notes search returned no useful evidence.\nSearch attempted: patientId=\"5\", keywords=\"lumbar pain\"\nDo NOT conclude a policy criterion is unmet solely because this search was empty.\nTry a concise clinical search term instead of a long combined query.\nSuggested EHR search terms:\n- physical therapy\n- PT\n- physiotherapy\n- chiropractic\n- acupuncture\n- home exercise\n- therapeutic exercise\n- ordered by\n- physician order\nOnly consider evidence relevant to the diagnosis and body part for this prior authorization.\nEvaluate findings only against the policy rules provided in the agent state.\nThe search_ehr_notes search returned no useful evidence.\nSearch attempted: patientId=\"5\", keywords=\"MRI order\"\nDo NOT conclude a policy criterion is unmet solely because this search was empty.\nTry a concise clinical search term instead of a long combined query.\nSuggested EHR search terms:\n- physical therapy\n- PT\n- physiotherapy\n- chiropractic\n- acupuncture\n- home exercise\n- therapeutic exercise\n- ordered by\n- physician order\nOnly consider evidence relevant to the diagnosis and body part for this prior authorization.\nEvaluate findings only against the policy rules provided in the agent state.\nThe search_ehr_notes search returned no useful evidence.\nSearch attempted: patientId=\"5\", keywords=\"surgery\"\nDo NOT conclude a policy criterion is unmet solely because this search was empty.\nTry a concise clinical search term instead of a long combined query.\nSuggested EHR search terms:\n- physical therapy\n- PT\n- physiotherapy\n- chiropractic\n- acupuncture\n- home exercise\n- therapeutic exercise\n- ordered by\n- physician order\nOnly consider evidence relevant to the diagnosis and body part for this prior authorization.\nEvaluate findings only against the policy rules provided in the agent state."
+      },
+      {
+        "type": "reasoner",
+        "title": "Final Recommendation",
+        "content": "Decision: Manual Review Required\n\nRationale:\n- The available evidence contains conflicting documentation regarding conservative treatment:\n  - 2026-01-10: \"Patient refused physical therapy.\"\n  - 2026-02-25: \"Patient completed 6 weeks of physical therapy.\"\n- Per the policy evaluation rules, conflicting clinical evidence must not be reconciled or resolved by assuming one record supersedes the other. Conflicting evidence requires Manual Review.\n- In addition, the policy requires that:\n  - The MRI be ordered by an M.D. or D.O. assuming responsibility for the patient's management.\n  - For non-red flag conditions, MRI be considered after at least 1 month of symptoms and failure of conservative treatment.\n  - For uncomplicated degenerative disc disease or herniated nucleus pulposus, surgical intervention or another aggressive treatment must be under consideration.\n- The currently collected evidence does not establish the remaining required policy elements.\n\nFinal determination: Manual Review Required."
+      }
+    ],
+    "recommendation": "Manual Review Required",
+    "gatheredEvidence": [
+      {
+        "status": "Met",
+        "dateFound": "2026-01-10T00:00:00.000Z",
+        "documentId": "EHR-PAT004-001",
+        "sourceType": "EHR",
+        "snippetText": "Patient refused physical therapy."
+      },
+      {
+        "status": "Met",
+        "dateFound": "2026-02-25T00:00:00.000Z",
+        "documentId": "EHR-PAT004-002",
+        "sourceType": "EHR",
+        "snippetText": "Patient completed 6 weeks of physical therapy."
       }
     ]
   }

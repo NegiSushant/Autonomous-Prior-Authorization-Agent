@@ -1,39 +1,30 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
-import prismaClient from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
+import { requireAuth } from "@/lib/requireAuth";
+import { getUserService } from "@/di/servicesDil";
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    const user = await requireAuth(["SUPERADMIN", "ADMIN"]);
 
-    const users = await prismaClient.user.findMany({
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        organizationId: true,
-        createdAt: true,
-        organization: {
-          select: { id: true, name: true },
-        },
-      },
-    });
+    const service = getUserService();
+
+    const users = await service.userInfoList(user);
 
     return NextResponse.json({ success: true, data: users });
-  } catch (error) {
-    console.error(error);
+  } catch (error: unknown) {
+    console.error("Error while retrive User info: ", error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
     return NextResponse.json(
-      { success: false, message: "Failed to fetch users" },
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }
@@ -41,13 +32,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    await requireAuth(["SUPERADMIN", "ADMIN"]);
 
     const body = await req.json();
     const { email, password, name, role, organizationId } = body;
@@ -59,40 +44,40 @@ export async function POST(req: Request) {
       );
     }
 
-    const existing = await prismaClient.user.findUnique({
-      where: { email: email.trim() },
+    const services = getUserService();
+    const user = await services.createUser({
+      email: email.trim(),
+      password: password,
+      name: name?.trim() || null,
+      role: role || "REVIEWER",
+      organizationId: organizationId ? Number(organizationId) : 1,
     });
-    if (existing) {
+
+    if (!user) {
       return NextResponse.json(
-        { success: false, message: "Email already in use" },
-        { status: 400 },
+        { success: false, message: "Failed to create user!" },
+        { status: 404 },
       );
     }
 
-    const hashed = await bcrypt.hash(password, 10);
-
-    const user = await prismaClient.user.create({
-      data: {
-        email: email.trim(),
-        password: hashed,
-        name: name?.trim() || null,
-        role: role || "REVIEWER",
-        organizationId: organizationId ? Number(organizationId) : null,
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        organizationId: true,
-      },
-    });
-
-    return NextResponse.json({ success: true, data: user });
-  } catch (error) {
-    console.error(error);
     return NextResponse.json(
-      { success: false, message: "Failed to create user" },
+      { success: true, message: "User created successfully!" },
+      { status: 200 },
+    );
+  } catch (error: unknown) {
+    console.error("Error while creating User: ", error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
+    return NextResponse.json(
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }

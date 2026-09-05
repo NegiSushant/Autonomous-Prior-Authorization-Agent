@@ -1,7 +1,6 @@
 import { AIMessage, ToolMessage } from "@langchain/core/messages";
 import { END } from "@langchain/langgraph";
-
-import { PAAgentState } from "@/lib/schemas/state";
+import { PAAgentState } from "@/types/agentState.dto";
 
 export const MAX_ITERATIONS = 5;
 

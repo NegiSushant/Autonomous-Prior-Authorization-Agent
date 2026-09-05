@@ -1,24 +1,21 @@
 import { NextResponse } from "next/server";
-import prismaClient from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
+import { requireAuth } from "@/lib/requireAuth";
+import { getOrganizationsService } from "@/di/servicesDil";
 
-type Params = { params: Promise<{ id: string }> };
+type Params = { params: Promise<{ id: number }> };
 
 export async function GET(_req: Request, { params }: Params) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    const sessionUser = await requireAuth(["ADMIN", "SUPERADMIN"]);
 
     const { id } = await params;
-    const organization = await prismaClient.organization.findUnique({
-      where: { id: Number(id) },
-    });
+    const orgId = Number(id);
+
+    const services = getOrganizationsService();
+    const organization = await services.listOrganizationById(
+      sessionUser,
+      orgId,
+    );
 
     if (!organization) {
       return NextResponse.json(
@@ -29,8 +26,19 @@ export async function GET(_req: Request, { params }: Params) {
 
     return NextResponse.json({ success: true, data: organization });
   } catch (error) {
+    console.error(error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
     return NextResponse.json(
-      { success: false, message: "Server error" },
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }
@@ -38,34 +46,73 @@ export async function GET(_req: Request, { params }: Params) {
 
 export async function PUT(req: Request, { params }: Params) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    await requireAuth(["SUPERADMIN"]);
 
     const { id } = await params;
+    const orgId = Number(id);
     const body = await req.json();
 
-    const organization = await prismaClient.organization.update({
-      where: { id: Number(id) },
-      data: {
-        name: body.name?.trim(),
-        type: body.type,
-        address: body.address || null,
-        phone: body.phone || null,
-        email: body.email || null,
-        isActive: body.isActive,
-      },
+    const services = getOrganizationsService();
+
+    const organization = await services.updateOrganizationById(orgId, {
+      name: body.name?.trim(),
+      type: body.type,
+      address: body.address || null,
+      phone: body.phone || null,
+      email: body.email || null,
+      isActive: body.isActive,
     });
 
     return NextResponse.json({ success: true, data: organization });
   } catch (error) {
     console.error(error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
     return NextResponse.json(
-      { success: false, message: "Failed to update" },
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(req: Request, { params }: Params) {
+  try {
+    await requireAuth(["SUPERADMIN"]);
+
+    const { id } = await params;
+    const orgId = Number(id);
+
+    const services = getOrganizationsService();
+    const isDeleted = await services.deleteOrganizationById(orgId);
+
+    if (!isDeleted) {
+      return NextResponse.json(
+        { success: false, message: "Failed to delete!" },
+        { status: 404 },
+      );
+    }
+  } catch (error) {
+    console.error(error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
+    return NextResponse.json(
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }

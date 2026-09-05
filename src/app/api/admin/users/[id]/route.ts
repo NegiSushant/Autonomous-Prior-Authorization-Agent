@@ -1,45 +1,33 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
-import prismaClient from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
+import { requireAuth } from "@/lib/requireAuth";
+import { getUserService } from "@/di/servicesDil";
 
-type Params = { params: Promise<{ id: string }> };
+type Params = { params: Promise<{ id: number }> };
 
 export async function GET(_req: Request, { params }: Params) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    await requireAuth(["SUPERADMIN", "ADMIN"]);
 
     const { id } = await params;
-    const user = await prismaClient.user.findUnique({
-      where: { id: Number(id) },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        organizationId: true,
-        organization: { select: { id: true, name: true } },
-      },
-    });
+    const userId = Number(id);
 
-    if (!user) {
-      return NextResponse.json(
-        { success: false, message: "User not found" },
-        { status: 404 },
-      );
-    }
+    const services = getUserService();
+    const userInfo = await services.ListUserInfoById(userId);
 
-    return NextResponse.json({ success: true, data: user });
+    return NextResponse.json({ success: true, data: userInfo });
   } catch (error) {
+    console.error("Error while retrive User info: ", error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
     return NextResponse.json(
-      { success: false, message: "Server error" },
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }
@@ -47,46 +35,47 @@ export async function GET(_req: Request, { params }: Params) {
 
 export async function PUT(req: Request, { params }: Params) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    await requireAuth(["SUPERADMIN", "ADMIN"]);
 
     const { id } = await params;
+    const userId = Number(id);
     const body = await req.json();
     const { email, password, name, role, organizationId } = body;
 
-    const data: Record<string, unknown> = {
+    const services = getUserService();
+
+    const user = await services.updateUserDataById(userId, {
       email: email?.trim(),
       name: name?.trim() || null,
       role: role || "REVIEWER",
       organizationId: organizationId ? Number(organizationId) : null,
-    };
-
-    if (password?.trim()) {
-      data.password = await bcrypt.hash(password, 10);
-    }
-
-    const user = await prismaClient.user.update({
-      where: { id: Number(id) },
-      data,
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        organizationId: true,
-      },
     });
 
-    return NextResponse.json({ success: true, data: user });
-  } catch (error) {
-    console.error(error);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, message: "Failed to update user!" },
+        { status: 404 },
+      );
+    }
+
     return NextResponse.json(
-      { success: false, message: "Failed to update user" },
+      { success: true, message: "User updated successfully!" },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error while updated User info: ", error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
+    return NextResponse.json(
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }
@@ -94,22 +83,39 @@ export async function PUT(req: Request, { params }: Params) {
 
 export async function DELETE(_req: Request, { params }: Params) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
+    await requireAuth(["SUPERADMIN", "ADMIN"]);
+
+    const { id } = await params;
+    const userId = Number(id);
+
+    const services = getUserService();
+    const isUserDeleted = await services.deleteUserById(userId);
+
+    if (!isUserDeleted) {
       return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 },
+        { success: false, message: "Failed to delete user" },
+        { status: 404 },
       );
     }
 
-    const { id } = await params;
-    await prismaClient.user.delete({ where: { id: Number(id) } });
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error(error);
     return NextResponse.json(
-      { success: false, message: "Failed to delete user" },
+      { success: true, message: "User deleted Successfully." },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error while Delete User: ", error);
+
+    if (error instanceof Error) {
+      if (error.message === "UNAUTHORIZED") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (error.message === "FORBIDDEN") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
+    return NextResponse.json(
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }

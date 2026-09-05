@@ -57,9 +57,11 @@ model Patient {
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
   organizationId    Int
+  isProceed         Boolean?
   notes             ClinicalNote[]
   medications       MedicationRecord[]
   imagingReports    ImagingReport[]
+  reviews           PriorAuthReview[]
   organization      Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   
   @@index([organizationId])
@@ -86,7 +88,7 @@ model MedicationRecord {
   documentId        String
   drugName          String
   category          String 
-  recordDate        String
+  recordDate        DateTime
   status            String             @default("active")
   createdAt         DateTime           @default(now())
   patient           Patient            @relation(fields: [patientId], references: [id], onDelete: Cascade)
@@ -100,7 +102,7 @@ model ImagingReport {
   documentId        String
   bodyPart          String
   findings          String
-  reportDate        String
+  reportDate        DateTime
   sourceType        String              @default("Imaging")
   createdAt         DateTime            @default(now())
   patient           Patient             @relation(fields: [patientId], references: [id], onDelete: Cascade)
@@ -109,20 +111,27 @@ model ImagingReport {
 }
 
 model PriorAuthReview {
-  id                Int   @id @default(autoincrement())
-  patientId         String
-  agentRecommendation String
-  agentStatus       String
-  finalDecision     String
-  reviewerNote      String?
-  agentResultJson   Json
-  overridesJson     Json
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  reviewerId        Int?
-  reviewer          User?    @relation(fields: [reviewerId], references: [id])
+  id                        Int   @id @default(autoincrement())
+  patientId                 Int
+  agentRecommendation       String
+  agentStatus               String
+  finalDecision             String?
+  reviewerNote              String?
+  criteria                  Json 
+  executionTrace            Json
+  gatheredEvidence          Json 
+  agentResultJson           Json
+  overridesJson             Json?
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+  reviewerId                Int?
+  reviewer                  User?    @relation(fields: [reviewerId], references: [id])
+  patient                   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
   @@index([patientId])
   @@index([createdAt])
+  @@index([agentStatus])
+  @@index([agentRecommendation])
 }
 
 

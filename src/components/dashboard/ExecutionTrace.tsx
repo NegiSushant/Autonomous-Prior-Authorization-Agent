@@ -1,6 +1,6 @@
 "use client";
 
-import { ExecutionStep } from "@/types/prior-auth-response";
+import { ExecutionStep } from "@/types/tools.dto";
 
 interface ExecutionTraceProps {
   trace: ExecutionStep[];
