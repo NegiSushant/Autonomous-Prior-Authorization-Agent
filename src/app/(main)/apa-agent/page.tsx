@@ -5,7 +5,6 @@ import PatientTable from "@/components/dashboard/PatientTable";
 import RecommendationPanel from "@/components/dashboard/RecommendationPanel";
 import ReviewHistory from "@/components/dashboard/ReviewHistory";
 import { PriorAuthResponse } from "@/types/agentState.dto";
-// import { PriorAuthResponse } from "@/types/prior-auth-response";
 
 export default function Home() {
   const [patientId, setPatientId] = useState<number | null>(null);
@@ -88,7 +87,6 @@ export default function Home() {
 // import PatientSelector from "@/components/dashboard/PatientSelector";
 // import InvestigationRunner from "@/components/dashboard/InvestigationRunner";
 // import RecommendationPanel from "@/components/dashboard/RecommendationPanel";
-// import { PriorAuthResponse } from "@/types/prior-auth-response";
 // import ReviewHistory from "@/components/dashboard/ReviewHistory";
 
 // export default function Home() {

@@ -49,7 +49,7 @@ export const search_pharmacy_records = tool(searchPharmacyRecords, {
     "Search the patient's pharmacy records for prescription history. Use this tool to verify whether the patient has been prescribed medications belonging to a specific category (for example, pain medication or anti-inflammatory drugs) as evidence of conservative treatment.",
 
   schema: z.object({
-    patientId: z.string().describe("Unique identifier of the patient."),
+    patientId: z.number().describe("Unique identifier of the patient."),
 
     medicationCategory: z
       .string()

@@ -3,7 +3,6 @@
 import { X } from "lucide-react";
 import EvidencePanel from "./EvidencePanel";
 import { EvidenceItem } from "@/types/tools.dto";
-// import { EvidenceItem } from "@/types/prior-auth-response";
 
 interface EvidenceDrawerProps {
   open: boolean;

@@ -40,16 +40,16 @@ export async function POST(req: NextRequest) {
 Agent response after mapping:
 
 Criteria:
-${JSON.stringify(response?.criteria, null, 2)}
+${JSON.stringify(response?.criteria, null)}
 
 Execution Traces:
-${JSON.stringify(response?.executionTrace, null, 2)}
+${JSON.stringify(response?.executionTrace, null)}
 
 Gathered Evidence:
-${JSON.stringify(response?.gatheredEvidence, null, 2)}
+${JSON.stringify(response?.gatheredEvidence, null)}
 
 Recommendations:
-${JSON.stringify(response?.recommendation, null, 2)}
+${JSON.stringify(response?.recommendation, null)}
 
 Status:
 ${response?.status}

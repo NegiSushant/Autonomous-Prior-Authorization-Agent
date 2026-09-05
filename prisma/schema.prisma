@@ -57,10 +57,12 @@ model Patient {
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
   organizationId    Int
+  isProceed         Boolean?
   notes             ClinicalNote[]
   medications       MedicationRecord[]
   imagingReports    ImagingReport[]
   organization      Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  agentResponse     AgentReviewResult[]
   
   @@index([organizationId])
   @@index([insurancePayer])
@@ -110,7 +112,7 @@ model ImagingReport {
 
 model PriorAuthReview {
   id                Int   @id @default(autoincrement())
-  patientId         String
+  patientId         Int
   agentRecommendation String
   agentStatus       String
   finalDecision     String
@@ -121,7 +123,32 @@ model PriorAuthReview {
   updatedAt         DateTime @updatedAt
   reviewerId        Int?
   reviewer          User?    @relation(fields: [reviewerId], references: [id])
+  agentReviewResults AgentReviewResult[]
+
   @@index([patientId])
+  @@index([createdAt])
+}
+
+
+model AgentReviewResult {
+  id                  Int      @id @default(autoincrement())
+  patientId           Int
+  priorAuthReviewId   Int?
+  recommendation      String
+  status              String
+  criteria            Json 
+  executionTrace      Json
+  gatheredEvidence    Json 
+  rawResponse         Json
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  patient             Patient? @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  priorAuthReview     PriorAuthReview? @relation(fields: [priorAuthReviewId], references: [id], onDelete: SetNull)
+
+  @@index([patientId])
+  @@index([priorAuthReviewId])
+  @@index([status])
+  @@index([recommendation])
   @@index([createdAt])
 }
 

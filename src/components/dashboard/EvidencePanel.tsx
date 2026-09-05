@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { ExternalLink, FileText, X } from "lucide-react";
 import { EvidenceItem } from "@/types/tools.dto";
-// import { EvidenceItem } from "@/types/prior-auth-response";
 
 interface EvidencePanelProps {
   evidence: EvidenceItem[];

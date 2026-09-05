@@ -1,6 +1,6 @@
 import { AIMessage, HumanMessage, ToolMessage } from "@langchain/core/messages";
-import { PAAgentState } from "@/lib/schemas/state";
 import { FailedToolCall, ParsedToolResult } from "@/types/tools.dto";
+import { PAAgentState } from "@/types/agentState.dto";
 
 
 export async function reflectNode(

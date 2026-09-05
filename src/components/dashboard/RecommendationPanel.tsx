@@ -10,12 +10,6 @@ import {
 } from "lucide-react";
 import ExecutionTraceDrawer from "./ExecutionTraceDrawer";
 import EvidenceDrawer from "./EvidenceDrawer";
-// import {
-//   EvidenceItem,
-//   ExecutionStep,
-//   CriterionEvaluation,
-//   // PriorAuthResponse,
-// } from "@/types/prior-auth-response";
 import { PriorAuthResponse } from "@/types/agentState.dto";
 import {
   CriterionEvaluation,

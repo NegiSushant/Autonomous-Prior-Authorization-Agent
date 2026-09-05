@@ -13,7 +13,7 @@ import {
 import {
   PriorAuthReviewSummary,
   CriteriaOverride,
-} from "@/types/prior-auth-response";
+} from "@/types/priorAuthResponse.dto";
 
 interface ReviewHistoryProps {
   patientId?: number; // optional – if provided, filters to that patient
