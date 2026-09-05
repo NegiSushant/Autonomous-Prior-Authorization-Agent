@@ -7,6 +7,7 @@ export interface IPriorAuthService {
     session: SessionUser,
   ): Promise<PAAgentState | null>;
 
-
   mapAgentResponse(state: PAAgentState): Promise<PriorAuthResponse | null>;
+
+  storeAgentResponse(state: PriorAuthResponse): Promise<boolean>;
 }

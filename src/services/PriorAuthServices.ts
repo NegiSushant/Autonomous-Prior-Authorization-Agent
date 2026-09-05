@@ -10,18 +10,18 @@ import {
 } from "@/di/reposetriesDiI";
 import { ExecutionStep } from "@/types/tools.dto";
 import { buildCriteria } from "@/lib/utils/MapResponse";
-import { IAgentRAGRepository } from "@/lib/interfaces/IRepository/IAgentRAGRepository";
+import { IAgentsDataRepository } from "@/lib/interfaces/IRepository/IAgentsDataRepository";
 import { IEmbeddingServices } from "@/lib/interfaces/IServices/IEmbeddingServices";
 import { getEmbeddingService } from "@/di/servicesDil";
 
 export class PriorAuthServices implements IPriorAuthService {
   private patientRepository: IPatientDataRepository;
-  private agentRagRepository: IAgentRAGRepository;
+  private agentDataRepository: IAgentsDataRepository;
   private embeddingServices: IEmbeddingServices;
 
   constructor() {
     this.patientRepository = getPatientDataRepository();
-    this.agentRagRepository = getAgentRAGRepository();
+    this.agentDataRepository = getAgentRAGRepository();
     this.embeddingServices = getEmbeddingService();
   }
 
@@ -183,6 +183,18 @@ export class PriorAuthServices implements IPriorAuthService {
     } catch (error) {
       console.error(`error while maping agent response: ${error}`);
       return null;
+    }
+  }
+
+  async storeAgentResponse(state: PriorAuthResponse): Promise<boolean> {
+    try {
+      const isAgentResponseSave =
+        await this.agentDataRepository.storeAgentResponse(state);
+      if (!isAgentResponseSave) return false;
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
     }
   }
 }

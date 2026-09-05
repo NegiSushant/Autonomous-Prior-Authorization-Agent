@@ -1,8 +1,8 @@
-import { IAgentRAGRepository } from "@/lib/interfaces/IRepository/IAgentRAGRepository";
+import { IAgentsDataRepository } from "@/lib/interfaces/IRepository/IAgentsDataRepository";
 import { IOrganizationsRepository } from "@/lib/interfaces/IRepository/IOrganizationsRepository";
 import { IPatientDataRepository } from "@/lib/interfaces/IRepository/IPatientDataRepository";
 import { IUserRepository } from "@/lib/interfaces/IRepository/IUserRepository";
-import { AgentRAGRepository } from "@/repository/AgentRAGRepository";
+import { AgentsDataRepository } from "@/repository/AgentsDataRepository";
 import { OrganizationRepository } from "@/repository/OrganizationRepository";
 import { PatientDataRepository } from "@/repository/PatientDataRepository";
 import { UserRepository } from "@/repository/UserRepository";
@@ -10,7 +10,7 @@ import { UserRepository } from "@/repository/UserRepository";
 let patientDataRepository: IPatientDataRepository | null = null;
 let organisationRepository: IOrganizationsRepository | null = null;
 let userRepository: IUserRepository | null = null;
-let agentRAGRepository: IAgentRAGRepository | null = null;
+let agentRAGRepository: IAgentsDataRepository | null = null;
 
 export function getPatientDataRepository(): IPatientDataRepository {
   if (!patientDataRepository) {
@@ -33,9 +33,9 @@ export function getUserRepository(): IUserRepository {
   return userRepository;
 }
 
-export function getAgentRAGRepository(): IAgentRAGRepository {
+export function getAgentRAGRepository(): IAgentsDataRepository {
   if (!agentRAGRepository) {
-    agentRAGRepository = new AgentRAGRepository();
+    agentRAGRepository = new AgentsDataRepository();
   }
   return agentRAGRepository;
 }

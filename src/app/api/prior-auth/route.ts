@@ -36,6 +36,8 @@ export async function POST(req: NextRequest) {
       });
     }
     const response = await services.mapAgentResponse(state);
+
+    if (response) await services.storeAgentResponse(response);
     console.log(`
 Agent response after mapping:
 

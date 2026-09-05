@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const patientId = searchParams.get("patientId");
+    const patientId = Number(searchParams.get("patientId"));
 
     const reviews = await prismaClient.priorAuthReview.findMany({
       where: patientId ? { patientId } : undefined,

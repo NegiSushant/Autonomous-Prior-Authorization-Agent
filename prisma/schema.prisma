@@ -61,8 +61,8 @@ model Patient {
   notes             ClinicalNote[]
   medications       MedicationRecord[]
   imagingReports    ImagingReport[]
+  reviews           PriorAuthReview[]
   organization      Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  agentResponse     AgentReviewResult[]
   
   @@index([organizationId])
   @@index([insurancePayer])
@@ -111,45 +111,27 @@ model ImagingReport {
 }
 
 model PriorAuthReview {
-  id                Int   @id @default(autoincrement())
-  patientId         Int
-  agentRecommendation String
-  agentStatus       String
-  finalDecision     String
-  reviewerNote      String?
-  agentResultJson   Json
-  overridesJson     Json
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  reviewerId        Int?
-  reviewer          User?    @relation(fields: [reviewerId], references: [id])
-  agentReviewResults AgentReviewResult[]
+  id                        Int   @id @default(autoincrement())
+  patientId                 Int
+  agentRecommendation       String
+  agentStatus               String
+  finalDecision             String?
+  reviewerNote              String?
+  criteria                  Json 
+  executionTrace            Json
+  gatheredEvidence          Json 
+  agentResultJson           Json
+  overridesJson             Json?
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+  reviewerId                Int?
+  reviewer                  User?    @relation(fields: [reviewerId], references: [id])
+  patient                   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
 
   @@index([patientId])
   @@index([createdAt])
-}
-
-
-model AgentReviewResult {
-  id                  Int      @id @default(autoincrement())
-  patientId           Int
-  priorAuthReviewId   Int?
-  recommendation      String
-  status              String
-  criteria            Json 
-  executionTrace      Json
-  gatheredEvidence    Json 
-  rawResponse         Json
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  patient             Patient? @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  priorAuthReview     PriorAuthReview? @relation(fields: [priorAuthReviewId], references: [id], onDelete: SetNull)
-
-  @@index([patientId])
-  @@index([priorAuthReviewId])
-  @@index([status])
-  @@index([recommendation])
-  @@index([createdAt])
+  @@index([agentStatus])
+  @@index([agentRecommendation])
 }
 
 

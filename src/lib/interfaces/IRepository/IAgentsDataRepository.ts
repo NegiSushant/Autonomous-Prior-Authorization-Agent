@@ -1,4 +1,6 @@
-export interface IAgentRAGRepository {
+import { PriorAuthResponse } from "@/types/agentState.dto";
+
+export interface IAgentsDataRepository {
   fetchSimilarPolicyChunks(
     embedding: number[],
     limit: number,
@@ -11,4 +13,6 @@ export interface IAgentRAGRepository {
       distance: number;
     }>
   >;
+
+  storeAgentResponse(state: PriorAuthResponse): Promise<boolean>
 }

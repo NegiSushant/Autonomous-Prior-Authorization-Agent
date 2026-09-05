@@ -1,12 +1,12 @@
 import { getAgentRAGRepository } from "@/di/reposetriesDiI";
 import { embedingModel } from "@/lib/agents/embedingModel";
-import { IAgentRAGRepository } from "@/lib/interfaces/IRepository/IAgentRAGRepository";
+import { IAgentsDataRepository } from "@/lib/interfaces/IRepository/IAgentsDataRepository";
 import { IEmbeddingServices } from "@/lib/interfaces/IServices/IEmbeddingServices";
 import { toBullets } from "@/lib/utils/embedingfilters";
 import { PolicyRetrievalResult } from "@/types/tools.dto";
 
 export class EmbeddingServices implements IEmbeddingServices {
-  private repository: IAgentRAGRepository;
+  private repository: IAgentsDataRepository;
 
   constructor() {
     this.repository = getAgentRAGRepository();
