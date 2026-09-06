@@ -1,13 +1,48 @@
-import { NextRequest, NextResponse } from "next/server";
-import { PriorAuthReviewPayload } from "@/types/priorAuthResponse.dto";
-import { requireAuth } from "@/lib/requireAuth";
 import { getOrganizationsService, getPriorAuthService } from "@/di/servicesDil";
+import { requireAuth } from "@/lib/requireAuth";
+import { PriorAuthReviewPayload } from "@/types/priorAuthResponse.dto";
+import { NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+type Params = {
+  params: Promise<{ patientId: string }>;
+};
+
+export async function GET(_req: Request, { params }: Params) {
+  try {
+    const { patientId } = await params;
+    console.log(`Search Params: ${patientId}`);
+    const pId = Number(patientId);
+    console.log(`Patient iD: ${pId}`);
+
+    const services = getPriorAuthService();
+    const reviews = await services.retriveAgentResponse(pId);
+    console.log(`Agent saved response: ${reviews}`);
+    return NextResponse.json({
+      success: true,
+      data: reviews,
+    });
+  } catch (error) {
+    console.error("[prior-auth/review GET]", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          error instanceof Error ? error.message : "Failed to fetch reviews.",
+      },
+      { status: 500 },
+    );
+  }
+}
+
+export async function POST(_req: Request, { params }: Params) {
   try {
     const sessionUser = await requireAuth(["SUPERADMIN", "ADMIN", "REVIEWER"]);
-    const body = (await req.json()) as PriorAuthReviewPayload;
-    const patientId = body.patientId;
+    
+    const { patientId } = await params;
+
+    const pId = Number(patientId);
+    const body = (await _req.json()) as PriorAuthReviewPayload;
+    // const patientId = body.patientId;
 
     //1. if user role === superadmin then allow overide the agent reponse
     //2. Admin and user only overide there perspective patient data.
@@ -16,7 +51,7 @@ export async function POST(req: NextRequest) {
       // based on the organization id varify the patient i.e. patient and user should belongs the same orgs
       const isOrgsMeet = await orgServies.ensureSameOrganization(
         sessionUser.id,
-        patientId,
+        pId,
       );
 
       if (!isOrgsMeet) {
@@ -79,30 +114,6 @@ export async function POST(req: NextRequest) {
         success: false,
         message:
           error instanceof Error ? error.message : "Failed to save review.",
-      },
-      { status: 500 },
-    );
-  }
-}
-
-export async function GET(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const patientId = Number(searchParams.get("patientId"));
-
-    const services = getPriorAuthService();
-    const reviews = await services.retriveAgentResponse(patientId);
-    return NextResponse.json({
-      success: true,
-      data: reviews,
-    });
-  } catch (error) {
-    console.error("[prior-auth/review GET]", error);
-    return NextResponse.json(
-      {
-        success: false,
-        message:
-          error instanceof Error ? error.message : "Failed to fetch reviews.",
       },
       { status: 500 },
     );

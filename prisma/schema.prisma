@@ -57,7 +57,7 @@ model Patient {
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
   organizationId    Int
-  isProceed         Boolean?
+  isProceed         Boolean?              @default(false)
   notes             ClinicalNote[]
   medications       MedicationRecord[]
   imagingReports    ImagingReport[]
@@ -111,8 +111,8 @@ model ImagingReport {
 }
 
 model PriorAuthReview {
-  id                        Int   @id @default(autoincrement())
-  patientId                 Int
+  id                        Int         @id @default(autoincrement())
+  patientId                 Int         @unique
   agentRecommendation       String
   agentStatus               String
   finalDecision             String?
@@ -122,11 +122,11 @@ model PriorAuthReview {
   gatheredEvidence          Json 
   agentResultJson           Json
   overridesJson             Json?
-  createdAt                 DateTime @default(now())
-  updatedAt                 DateTime @updatedAt
+  createdAt                 DateTime    @default(now())
+  updatedAt                 DateTime    @updatedAt
   reviewerId                Int?
-  reviewer                  User?    @relation(fields: [reviewerId], references: [id])
-  patient                   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  reviewer                  User?       @relation(fields: [reviewerId], references: [id])
+  patient                   Patient     @relation(fields: [patientId], references: [id], onDelete: Cascade)
 
   @@index([patientId])
   @@index([createdAt])

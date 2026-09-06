@@ -30,7 +30,6 @@ export default function PatientsPage() {
       if (!res.ok || !json.success) {
         throw new Error(json.message || "Failed to load");
       }
-      console.log("API Response Data:", json.data);
       setPatients(json.data ?? []);
       setError(null);
     } catch (err) {

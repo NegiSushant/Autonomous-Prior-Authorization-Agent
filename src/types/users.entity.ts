@@ -1,3 +1,6 @@
+import { JsonValue } from "@prisma/client/runtime/client";
+import { CriterionEvaluation, EvidenceItem, ExecutionStep } from "./tools.dto";
+
 export type UserRole = "SUPERADMIN" | "ADMIN" | "REVIEWER";
 
 export interface IUser {
@@ -11,16 +14,19 @@ export interface IUser {
   updatedAt: Date;
 }
 
-// export interface IPriorAuthReview {
-//   id: number;
-//   patientId: string;
-//   agentRecommendation: string;
-//   agentStatus: string;
-//   finalDecision: string;
-//   reviewerNote: string | null;
-//   agentResultJson: Record<string, any>;
-//   overridesJson: Record<string, any>;
-//   createdAt: Date;
-//   updatedAt: Date;
-//   reviewerId: number | null;
-// }
+export interface IPriorAuthReview {
+  id: number;
+  patientId: number;
+  agentRecommendation: string;
+  agentStatus: string;
+  finalDecision: string | null;
+  reviewerNote: string | null;
+  reviewerId: number | null;
+  criteria: CriterionEvaluation[];
+  executionTrace: ExecutionStep[];
+  gatheredEvidence: EvidenceItem[];
+  agentResultJson: JsonValue;
+  overridesJson: JsonValue | null;
+  createdAt: Date;
+  updatedAt: Date;
+}

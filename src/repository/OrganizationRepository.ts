@@ -107,4 +107,33 @@ export class OrganizationRepository implements IOrganizationsRepository {
       return false;
     }
   }
+
+  async isSameOrganization(
+    userId: number,
+    patientId: number,
+  ): Promise<boolean> {
+    try {
+      const [user, patient] = await Promise.all([
+        prismaClient.user.findUnique({
+          where: { id: userId },
+          select: { organizationId: true },
+        }),
+        prismaClient.patient.findUnique({
+          where: { id: patientId },
+          select: { organizationId: true },
+        }),
+      ]);
+
+      // Either record not found
+      if (!user || !patient) return false;
+
+      // User has no organization
+      if (user.organizationId == null) return false;
+
+      return user.organizationId === patient.organizationId;
+    } catch (error) {
+      console.error(`Error wile matching the orgs: ${error}`);
+      return false;
+    }
+  }
 }

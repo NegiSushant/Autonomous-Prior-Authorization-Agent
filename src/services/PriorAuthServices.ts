@@ -13,6 +13,8 @@ import { buildCriteria } from "@/lib/utils/MapResponse";
 import { IAgentsDataRepository } from "@/lib/interfaces/IRepository/IAgentsDataRepository";
 import { IEmbeddingServices } from "@/lib/interfaces/IServices/IEmbeddingServices";
 import { getEmbeddingService } from "@/di/servicesDil";
+import { PriorAuthReviewPayload } from "@/types/priorAuthResponse.dto";
+import { IPriorAuthReview } from "@/types/users.entity";
 
 export class PriorAuthServices implements IPriorAuthService {
   private patientRepository: IPatientDataRepository;
@@ -195,6 +197,42 @@ export class PriorAuthServices implements IPriorAuthService {
     } catch (error) {
       console.error(error);
       return false;
+    }
+  }
+
+  async storeOverrideResponse(
+    state: PriorAuthReviewPayload,
+    reviewerId: number,
+  ): Promise<boolean> {
+    try {
+      const isDataSave = await this.agentDataRepository.overrideAgentResponse(
+        state.patientId,
+        state.overrides,
+        state.decision,
+        reviewerId,
+        state.reviewerNote,
+      );
+      if (!isDataSave) return false;
+
+      return true;
+    } catch (error) {
+      console.error(`Error while creating override data: ${error}`);
+      return false;
+    }
+  }
+
+  async retriveAgentResponse(
+    patientId: number,
+  ): Promise<IPriorAuthReview | null> {
+    try {
+      const result =
+        await this.agentDataRepository.getAgentResponseBasedOnId(patientId);
+      if (result === null) return null;
+
+      return result;
+    } catch (error) {
+      console.error(`Error while retriving the agent response: ${error}`);
+      return null;
     }
   }
 }

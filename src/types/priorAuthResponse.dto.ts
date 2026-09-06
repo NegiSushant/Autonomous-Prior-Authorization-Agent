@@ -1,6 +1,3 @@
-import { PriorAuthResponse } from "./agentState.dto";
-
-
 export interface CriteriaOverride {
   criteriaId: string;
   originalSatisfied: boolean;
@@ -14,13 +11,9 @@ export type FinalReviewDecision =
   | "REQUEST_ADDITIONAL_INFO";
 
 export interface PriorAuthReviewPayload {
-  /** The original agent response */
-  agentResult: PriorAuthResponse; 
-  /** Any criteria the reviewer overrode */
+  patientId: number;
   overrides: CriteriaOverride[];
-  /** Final human decision */
   decision: FinalReviewDecision;
-  /** Optional free-text note from the reviewer */
   reviewerNote?: string;
 }
 
