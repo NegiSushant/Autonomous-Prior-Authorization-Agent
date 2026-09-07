@@ -16,7 +16,7 @@ export default function PatientTable() {
   useEffect(() => {
     async function fetchPatients() {
       try {
-        const res = await fetch("/api//admin/patients");
+        const res = await fetch("/api/admin/patients");
         if (!res.ok) throw new Error("Failed to fetch patients");
         const data = await res.json();
 
