@@ -6,7 +6,8 @@ export interface IOrganizations {
   type: OrgType;
   address: string | null;
   phone: string  | null;
-  email: string  | null;
+  email: string;
+  domain: string;
   isActive: boolean;
   createdBy: string;
   createdAt: Date;

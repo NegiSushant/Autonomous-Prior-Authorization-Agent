@@ -1,4 +1,9 @@
 import { PriorAuthResponse } from "@/types/agentState.dto";
+import {
+  CriteriaOverride,
+  FinalReviewDecision,
+} from "@/types/priorAuthResponse.dto";
+import { IPriorAuthReview } from "@/types/users.entity";
 
 export interface IAgentsDataRepository {
   fetchSimilarPolicyChunks(
@@ -14,5 +19,16 @@ export interface IAgentsDataRepository {
     }>
   >;
 
-  storeAgentResponse(state: PriorAuthResponse): Promise<boolean>
+  storeAgentResponse(state: PriorAuthResponse): Promise<boolean>;
+  overrideAgentResponse(
+    patientId: number,
+    overrides: CriteriaOverride[],
+    decision: FinalReviewDecision,
+    reviewerId: number,
+    reviewerNote?: string,
+  ): Promise<boolean>;
+
+  getAgentResponseBasedOnId(
+    patientId: number,
+  ): Promise<IPriorAuthReview | null>;
 }

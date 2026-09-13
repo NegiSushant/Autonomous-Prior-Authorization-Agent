@@ -1,8 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Search, Loader2, Pencil, Trash2, X, Users } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Loader2,
+  Pencil,
+  Trash2,
+  X,
+  Users,
+  ChevronRight,
+  ChevronLeft,
+  UserShield,
+} from "lucide-react";
 import UserForm from "@/components/admin/UserForm";
+import { useClientTable } from "@/hooks/useClientTable";
+import { SortIcon } from "@/components/SortIcon";
 
 type UserRow = {
   id: number;
@@ -14,6 +27,8 @@ type UserRow = {
   createdAt?: string;
 };
 
+type SortKey = "id" | "name" | "email" | "role" | "organization";
+
 export default function UsersPage() {
   const [users, setUsers] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,6 +37,49 @@ export default function UsersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
+
+  //Search, paginations and Sorting state
+  const {
+    search,
+    setSearch,
+    pageSize,
+    setPageSize,
+    pageSizeOptions,
+    currentPage,
+    sortKey,
+    sortDirection,
+    handleSort,
+    paginatedData,
+    totalItems,
+    totalPages,
+    // startEntry,
+    endEntry,
+    goToPrevious,
+    goToNext,
+  } = useClientTable<UserRow, SortKey>({
+    data: users,
+    initialSortKey: "id",
+    searchKeys: (u) => [
+      u.name || "",
+      u.email,
+      u.role,
+      u.organization?.name || "",
+    ],
+    getSortValue: (u, key) => {
+      switch (key) {
+        case "id":
+          return u.id;
+        case "name":
+          return (u.name || "").toLowerCase();
+        case "email":
+          return u.email.toLowerCase();
+        case "role":
+          return u.role.toLowerCase();
+        case "organization":
+          return (u.organization?.name || "").toLowerCase();
+      }
+    },
+  });
 
   const fetchUsers = async () => {
     try {
@@ -108,13 +166,20 @@ export default function UsersPage() {
       </div>
 
       <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+        {/* Toolbar: Show entries + Search */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4 border-b border-slate-800">
           <div className="flex items-center gap-2 text-sm text-slate-400">
             <span>Show</span>
-            <select className="bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-white">
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
+            <select
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value))}
+              className="bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+            >
+              {pageSizeOptions.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
             </select>
             <span>entries</span>
           </div>
@@ -125,8 +190,12 @@ export default function UsersPage() {
             />
             <input
               type="text"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
               placeholder="Search users..."
-              className="bg-slate-800 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600 w-64"
+              className="bg-slate-800 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600 w-64 sm:w-64"
             />
           </div>
         </div>
@@ -141,82 +210,218 @@ export default function UsersPage() {
             {error}
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-slate-800/70 text-slate-300 text-left">
-                  <th className="px-5 py-3 font-medium">ID</th>
-                  <th className="px-5 py-3 font-medium">Name</th>
-                  <th className="px-5 py-3 font-medium">Email</th>
-                  <th className="px-5 py-3 font-medium">Role</th>
-                  <th className="px-5 py-3 font-medium">Organization</th>
-                  <th className="px-5 py-3 font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800">
-                {users.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="px-5 py-12 text-center text-slate-500"
-                    >
-                      <div className="flex flex-col items-center gap-3">
-                        <Users size={32} className="text-slate-600" />
-                        <p>No users found.</p>
-                        <button
-                          onClick={openCreateModal}
-                          className="text-blue-400 hover:text-blue-300 text-sm"
-                        >
-                          Create the first user
-                        </button>
-                      </div>
-                    </td>
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-slate-800/70 text-slate-300 text-left">
+                    {/* Sr. No. — sortable by id */}
+                    <th className="px-5 py-3 font-medium">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("id")}
+                        className="inline-flex items-center gap-1.5 hover:text-white transition"
+                      >
+                        Sr. No.
+                        <SortIcon
+                          column="id"
+                          sortKey={sortKey}
+                          sortDirection={sortDirection}
+                        />
+                      </button>
+                    </th>
+
+                    {/* Name */}
+                    <th className="px-5 py-3 font-medium">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("name")}
+                        className="inline-flex items-center gap-1.5 hover:text-white transition"
+                      >
+                        Name
+                        <SortIcon
+                          column="name"
+                          sortKey={sortKey}
+                          sortDirection={sortDirection}
+                        />
+                      </button>
+                    </th>
+
+                    {/* Email */}
+                    <th className="px-5 py-3 font-medium">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("email")}
+                        className="inline-flex items-center gap-1.5 hover:text-white transition"
+                      >
+                        Email
+                        <SortIcon
+                          column="email"
+                          sortKey={sortKey}
+                          sortDirection={sortDirection}
+                        />
+                      </button>
+                    </th>
+
+                    {/* Role */}
+                    <th className="px-5 py-3 font-medium">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("role")}
+                        className="inline-flex items-center gap-1.5 hover:text-white transition"
+                      >
+                        Role
+                        <SortIcon
+                          column="role"
+                          sortKey={sortKey}
+                          sortDirection={sortDirection}
+                        />
+                      </button>
+                    </th>
+
+                    {/* Organization */}
+                    <th className="px-5 py-3 font-medium">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("organization")}
+                        className="inline-flex items-center gap-1.5 hover:text-white transition"
+                      >
+                        Organization
+                        <SortIcon
+                          column="organization"
+                          sortKey={sortKey}
+                          sortDirection={sortDirection}
+                        />
+                      </button>
+                    </th>
+
+                    {/* Actions — not sortable */}
+                    <th className="px-5 py-3 font-medium">Actions</th>
                   </tr>
-                ) : (
-                  users.map((user) => (
-                    <tr
-                      key={user.id}
-                      className="hover:bg-slate-800/40 transition-colors"
-                    >
-                      <td className="px-5 py-3 font-mono text-slate-400">
-                        {user.id}
-                      </td>
-                      <td className="px-5 py-3 font-medium text-white">
-                        {user.name || "—"}
-                      </td>
-                      <td className="px-5 py-3 text-slate-300">{user.email}</td>
-                      <td className="px-5 py-3">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300">
-                          {user.role}
-                        </span>
-                      </td>
-                      <td className="px-5 py-3 text-slate-300">
-                        {user.organization?.name || "—"}
-                      </td>
-                      <td className="px-5 py-3">
-                        <div className="flex items-center gap-3">
-                          <button
-                            onClick={() => openEditModal(user)}
-                            className="text-blue-400 hover:text-blue-300"
-                            title="Edit"
-                          >
-                            <Pencil size={15} />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(user.id)}
-                            className="text-red-400 hover:text-red-300"
-                            title="Delete"
-                          >
-                            <Trash2 size={15} />
-                          </button>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {paginatedData.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={6}
+                        className="px-5 py-12 text-center text-slate-500"
+                      >
+                        <div className="flex flex-col items-center gap-3">
+                          <Users size={32} className="text-slate-600" />
+                          <p>
+                            {search.trim()
+                              ? "No users match your search."
+                              : "No users found."}
+                          </p>
+                          {!search.trim() && (
+                            <button
+                              onClick={openCreateModal}
+                              className="text-blue-400 hover:text-blue-300 text-sm"
+                            >
+                              Create the first user
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                  ) : (
+                    paginatedData.map((user, index) => {
+                      const serialNumber =
+                        (currentPage - 1) * pageSize + index + 1;
+                      return (
+                        <tr
+                          key={user.id}
+                          className="hover:bg-slate-800/40 transition-colors"
+                        >
+                          <td className="px-5 py-3 font-mono text-slate-400">
+                            {serialNumber}
+                          </td>
+                          <td className="px-5 py-3 font-medium text-white">
+                            {user.name || "—"}
+                          </td>
+                          <td className="px-5 py-3 text-slate-300">
+                            {user.email}
+                          </td>
+                          <td className="px-5 py-3">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300">
+                              {user.role}
+                            </span>
+                          </td>
+                          <td className="px-5 py-3 text-slate-300">
+                            {user.organization?.name || "—"}
+                          </td>
+                          <td className="px-5 py-3">
+                            <div className="flex items-center gap-3">
+
+                              {/** View user button */}
+                              <button
+                                onClick={() => openEditModal(user)}
+                                className="text-blue-400 hover:text-blue-300 cursor-pointer"
+                                title="Edit"
+                              >
+                                <Pencil size={15} />
+                              </button>
+
+                              {/** View patient */}
+                              <button
+                                // onClick={() => openEditModal(org)}
+                                className="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300 transition-colors cursor-pointer"
+                                title="view patient"
+                              >
+                                <UserShield size={15} />
+                              </button>
+
+                              {/** Delete user button */}
+                              <button
+                                onClick={() => handleDelete(user.id)}
+                                className="text-red-400 hover:text-red-300 cursor-pointer"
+                                title="Delete"
+                              >
+                                <Trash2 size={15} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Footer*/}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-t border-slate-800 text-sm text-slate-400">
+              <div>
+                {totalItems === 0
+                  ? "Showing 0 entries"
+                  : `Showing ${endEntry} of ${totalItems} entries`}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={goToPrevious}
+                  disabled={currentPage <= 1}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                >
+                  <ChevronLeft size={16} />
+                  Pre
+                </button>
+
+                <span className="px-2 text-slate-300">
+                  Page {currentPage} of {totalPages}
+                </span>
+
+                <button
+                  onClick={goToNext}
+                  disabled={currentPage >= totalPages}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                >
+                  Nxt
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          </>
         )}
       </div>
 

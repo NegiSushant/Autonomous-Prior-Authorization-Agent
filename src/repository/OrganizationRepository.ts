@@ -59,6 +59,7 @@ export class OrganizationRepository implements IOrganizationsRepository {
         data: {
           name: payload.name,
           email: payload.email,
+          domain: payload.domain,
           phone: payload.phone,
           address: payload.address,
           type: payload.type,
@@ -104,6 +105,35 @@ export class OrganizationRepository implements IOrganizationsRepository {
       return true;
     } catch (error) {
       console.error("Erroe while deleting organisation: ", error);
+      return false;
+    }
+  }
+
+  async isSameOrganization(
+    userId: number,
+    patientId: number,
+  ): Promise<boolean> {
+    try {
+      const [user, patient] = await Promise.all([
+        prismaClient.user.findUnique({
+          where: { id: userId },
+          select: { organizationId: true },
+        }),
+        prismaClient.patient.findUnique({
+          where: { id: patientId },
+          select: { organizationId: true },
+        }),
+      ]);
+
+      // Either record not found
+      if (!user || !patient) return false;
+
+      // User has no organization
+      if (user.organizationId == null) return false;
+
+      return user.organizationId === patient.organizationId;
+    } catch (error) {
+      console.error(`Error wile matching the orgs: ${error}`);
       return false;
     }
   }

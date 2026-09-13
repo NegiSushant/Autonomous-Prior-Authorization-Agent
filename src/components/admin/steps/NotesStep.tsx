@@ -80,7 +80,8 @@ export default function NotesStep({
                 <Field label="Note Date" htmlFor={`note-date-${index}`}>
                   <input
                     id={`note-date-${index}`}
-                    value={note.noteDate}
+                    // value={note.noteDate}
+                    value={toDateInputValue(note.noteDate)}
                     onChange={(e) =>
                       onChange(index, "noteDate", e.target.value)
                     }
@@ -123,4 +124,13 @@ export default function NotesStep({
       </div>
     </>
   );
+}
+
+
+function toDateInputValue(value: string | Date | null | undefined): string {
+  if (!value) return "";
+  const d = typeof value === "string" ? new Date(value) : value;
+  if (Number.isNaN(d.getTime())) return "";
+  // YYYY-MM-DD (from ISO / UTC midnight dates)
+  return d.toISOString().slice(0, 10);
 }

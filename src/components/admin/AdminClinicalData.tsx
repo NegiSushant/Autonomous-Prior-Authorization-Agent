@@ -173,7 +173,6 @@ export default function AdminClinicalData({
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1);
     } else if (onCancel) {
-      // Fixed: Hooked up unused onCancel to the initial back action
       onCancel();
     }
   };

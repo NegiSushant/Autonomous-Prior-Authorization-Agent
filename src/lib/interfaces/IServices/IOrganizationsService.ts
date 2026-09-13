@@ -7,8 +7,13 @@ import { IOrganizations } from "@/types/organizations.entity";
 import { SessionUser } from "@/types/users.dto";
 
 export interface IOrganizationsServices {
-  listOrganizations(session: SessionUser): Promise<OrganizationWithCountsDto[] | null>;
-  listOrganizationById(session: SessionUser, orgId: number): Promise<IOrganizations | null>;
+  listOrganizations(
+    session: SessionUser,
+  ): Promise<OrganizationWithCountsDto[] | null>;
+  listOrganizationById(
+    session: SessionUser,
+    orgId: number,
+  ): Promise<IOrganizations | null>;
 
   createNewOrganization(payload: CreateOrganizationDto): Promise<boolean>;
   updateOrganizationById(
@@ -16,4 +21,6 @@ export interface IOrganizationsServices {
     payload: UpdateOrganizationDto,
   ): Promise<boolean>;
   deleteOrganizationById(orgId: number): Promise<boolean>;
+
+  ensureSameOrganization(userId: number, patientId: number): Promise<boolean>;
 }

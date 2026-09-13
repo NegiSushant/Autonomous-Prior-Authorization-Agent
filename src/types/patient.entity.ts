@@ -7,6 +7,7 @@ export interface IPatient {
   procedureName: string;
   diagnosisCode: string;
   organizationId: number;
+  isProceed: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

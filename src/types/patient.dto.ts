@@ -5,7 +5,7 @@ import {
   IPatient,
 } from "./patient.entity";
 
-export type CreatePatientDto = Omit<IPatient, "id" | "createdAt" | "updatedAt">;
+export type CreatePatientDto = Omit<IPatient, "id" | "createdAt" | "updatedAt" | "isProceed">;
 
 export type CreateClinicalNoteDto = Omit<
   IClinicalNote,

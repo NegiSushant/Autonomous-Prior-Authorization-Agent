@@ -10,15 +10,17 @@ import {
 } from "lucide-react";
 import ExecutionTraceDrawer from "./ExecutionTraceDrawer";
 import EvidenceDrawer from "./EvidenceDrawer";
-import { PriorAuthResponse } from "@/types/agentState.dto";
+// import { PriorAuthResponse } from "@/types/agentState.dto";
 import {
   CriterionEvaluation,
   EvidenceItem,
   ExecutionStep,
 } from "@/types/tools.dto";
+import { IPriorAuthReview } from "@/types/users.entity";
 
 interface RecommendationPanelProps {
-  result: PriorAuthResponse;
+  result: IPriorAuthReview;
+  patientId: number;
   recommendation: string;
   status: string;
   trace: ExecutionStep[];
@@ -35,6 +37,7 @@ interface OverrideState {
 
 export default function RecommendationPanel({
   result,
+  patientId,
   recommendation,
   status,
   trace,
@@ -47,6 +50,7 @@ export default function RecommendationPanel({
   const [overrides, setOverrides] = useState<Record<string, OverrideState>>({});
   const [activeOverride, setActiveOverride] = useState<string | null>(null);
   const [justification, setJustification] = useState("");
+  const [reviewerNote, setReviewerNote] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
@@ -115,8 +119,10 @@ export default function RecommendationPanel({
   async function submitReview(
     decision: "APPROVED" | "DENIED" | "REQUEST_ADDITIONAL_INFO",
   ) {
-    if (!result) return; // you will need to pass the full result down or keep it in parent
-
+    if (!result || !patientId) {
+      setSubmitMessage("Missing patient ID or result");
+      return;
+    }
     setIsSubmitting(true);
     setSubmitMessage(null);
 
@@ -128,14 +134,14 @@ export default function RecommendationPanel({
     }));
 
     try {
-      const res = await fetch("/api/prior-auth/review", {
+      const res = await fetch(`/api/prior-auth/${patientId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          agentResult: result, // full PriorAuthResponse
+          patientId: patientId,
           overrides: overrideList,
           decision,
-          // reviewerNote: optional free text if add a note field
+          reviewerNote: reviewerNote.trim() || undefined,
         }),
       });
 
@@ -145,7 +151,8 @@ export default function RecommendationPanel({
         throw new Error(data.message || "Failed to save review");
       }
 
-      setSubmitMessage(`Review saved (${decision}). ID: ${data.data.reviewId}`);
+      // setSubmitMessage(`Review saved (${decision}). ID: ${data.data.reviewId}`);
+      setSubmitMessage(`${data.message}`);
     } catch (err) {
       setSubmitMessage(
         err instanceof Error ? err.message : "Failed to save review",
@@ -156,7 +163,7 @@ export default function RecommendationPanel({
   }
 
   return (
-    <div className="mt-8 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm transition-colors duration-200">
+    <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm transition-colors duration-200">
       {/*HEADER*/}
       <div className="mb-8 flex items-center justify-between">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -383,6 +390,23 @@ export default function RecommendationPanel({
         <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
           Review Action
         </h3>
+        {/* Reviewer Note */}
+        <div className="mb-5">
+          <label
+            htmlFor="reviewer-note"
+            className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-slate-300"
+          >
+            Reviewer Note <span className="text-gray-400">(optional)</span>
+          </label>
+          <textarea
+            id="reviewer-note"
+            value={reviewerNote}
+            onChange={(e) => setReviewerNote(e.target.value)}
+            placeholder="Add any additional clinical notes or comments for this decision..."
+            rows={3}
+            className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white p-3 text-sm outline-none transition focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-400/20"
+          />
+        </div>
         <div className="flex flex-wrap gap-3">
           <button
             type="button"

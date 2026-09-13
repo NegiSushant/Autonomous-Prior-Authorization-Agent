@@ -1,11 +1,31 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Search, Loader2, X, UserRound } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Loader2,
+  X,
+  UserRound,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import AdminClinicalData from "@/components/admin/AdminClinicalData";
 import { InitialData } from "@/components/admin/steps/constants";
 import { PatientFullResponseDto } from "@/types/patient.dto";
+import { useClientTable } from "@/hooks/useClientTable";
+import { SortIcon } from "@/components/SortIcon";
 
+type SortKey =
+  | "id"
+  | "name"
+  | "email"
+  | "insurance"
+  | "procedure"
+  | "diagnosis"
+  | "notes"
+  | "meds"
+  | "imaging";
 
 export default function PatientsPage() {
   const [patients, setPatients] = useState<PatientFullResponseDto[]>([]);
@@ -22,6 +42,59 @@ export default function PatientsPage() {
   );
   const [modalLoading, setModalLoading] = useState(false);
 
+  const {
+    search,
+    setSearch,
+    pageSize,
+    setPageSize,
+    pageSizeOptions,
+    currentPage,
+    sortKey,
+    sortDirection,
+    handleSort,
+    paginatedData,
+    totalItems,
+    totalPages,
+    // startEntry,
+    endEntry,
+    goToPrevious,
+    goToNext,
+  } = useClientTable<PatientFullResponseDto, SortKey>({
+    data: patients,
+    initialSortKey: "id",
+    searchKeys: (p) => [
+      String(p.id ?? ""),
+      p.name || "",
+      p.email || "",
+      p.insurancePayer || "",
+      p.procedureCode || "",
+      p.procedureName || "",
+      p.diagnosisCode || "",
+    ],
+    getSortValue: (p, key) => {
+      switch (key) {
+        case "id":
+          return p.id ?? 0;
+        case "name":
+          return (p.name || "").toLowerCase();
+        case "email":
+          return (p.email || "").toLowerCase();
+        case "insurance":
+          return (p.insurancePayer || "").toLowerCase();
+        case "procedure":
+          return `${p.procedureCode || ""} ${p.procedureName || ""}`.toLowerCase();
+        case "diagnosis":
+          return (p.diagnosisCode || "").toLowerCase();
+        case "notes":
+          return p.notes?.length ?? 0;
+        case "meds":
+          return p.medications?.length ?? 0;
+        case "imaging":
+          return p.imagingReports?.length ?? 0;
+      }
+    },
+  });
+
   const fetchPatients = async () => {
     try {
       const res = await fetch("/api/admin/patients");
@@ -30,7 +103,6 @@ export default function PatientsPage() {
       if (!res.ok || !json.success) {
         throw new Error(json.message || "Failed to load");
       }
-      console.log("API Response Data:", json.data);
       setPatients(json.data ?? []);
       setError(null);
     } catch (err) {
@@ -145,10 +217,16 @@ export default function PatientsPage() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-800 gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
             <span>Show</span>
-            <select className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md px-2 py-1 text-slate-900 dark:text-white outline-none">
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
+            <select
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value))}
+              className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md px-2 py-1 text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            >
+              {pageSizeOptions.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
             </select>
             <span>entries</span>
           </div>
@@ -160,6 +238,8 @@ export default function PatientsPage() {
             />
             <input
               type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search patients..."
               className="w-full sm:w-64 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -176,126 +256,294 @@ export default function PatientsPage() {
             {error}
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-slate-50 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 text-left">
-                  <th className="px-5 py-3 font-medium">Patient ID</th>
-                  <th className="px-5 py-3 font-medium">Name</th>
-                  <th className="px-5 py-3 font-medium">Patient Email</th>
-                  <th className="px-5 py-3 font-medium">Insurance</th>
-                  <th className="px-5 py-3 font-medium">Procedure</th>
-                  <th className="px-5 py-3 font-medium">Diagnosis</th>
-                  <th className="px-5 py-3 font-medium text-center">Notes</th>
-                  <th className="px-5 py-3 font-medium text-center">Meds</th>
-                  <th className="px-5 py-3 font-medium text-center">Imaging</th>
-                  <th className="px-5 py-3 font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                {!Array.isArray(patients) || patients.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={10}
-                      className="px-5 py-10 text-center text-slate-500"
-                    >
-                      <div className="flex flex-col items-center gap-3">
-                        <UserRound size={32} className="text-slate-400" />
-                        <p>No patients found.</p>
-                        <button
-                          onClick={openCreateModal}
-                          className="text-blue-600 dark:text-blue-400 text-sm font-medium"
-                        >
-                          Create the first patient
-                        </button>
-                      </div>
-                    </td>
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-slate-50 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 text-left">
+                    <th className="px-5 py-3 font-medium">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("id")}
+                        className="inline-flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition"
+                      >
+                        Patient ID
+                        <SortIcon
+                          column="id"
+                          sortKey={sortKey}
+                          sortDirection={sortDirection}
+                        />
+                      </button>
+                    </th>
+
+                    <th className="px-5 py-3 font-medium">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("name")}
+                        className="inline-flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition"
+                      >
+                        Name
+                        <SortIcon
+                          column="name"
+                          sortKey={sortKey}
+                          sortDirection={sortDirection}
+                        />
+                      </button>
+                    </th>
+
+                    <th className="px-5 py-3 font-medium">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("email")}
+                        className="inline-flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition"
+                      >
+                        Patient Email
+                        <SortIcon
+                          column="email"
+                          sortKey={sortKey}
+                          sortDirection={sortDirection}
+                        />
+                      </button>
+                    </th>
+
+                    <th className="px-5 py-3 font-medium">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("insurance")}
+                        className="inline-flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition"
+                      >
+                        Insurance
+                        <SortIcon
+                          column="insurance"
+                          sortKey={sortKey}
+                          sortDirection={sortDirection}
+                        />
+                      </button>
+                    </th>
+
+                    <th className="px-5 py-3 font-medium">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("procedure")}
+                        className="inline-flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition"
+                      >
+                        Procedure
+                        <SortIcon
+                          column="procedure"
+                          sortKey={sortKey}
+                          sortDirection={sortDirection}
+                        />
+                      </button>
+                    </th>
+
+                    <th className="px-5 py-3 font-medium">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("diagnosis")}
+                        className="inline-flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition"
+                      >
+                        Diagnosis
+                        <SortIcon
+                          column="diagnosis"
+                          sortKey={sortKey}
+                          sortDirection={sortDirection}
+                        />
+                      </button>
+                    </th>
+
+                    <th className="px-5 py-3 font-medium text-center">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("notes")}
+                        className="inline-flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition"
+                      >
+                        Notes
+                        <SortIcon
+                          column="notes"
+                          sortKey={sortKey}
+                          sortDirection={sortDirection}
+                        />
+                      </button>
+                    </th>
+
+                    <th className="px-5 py-3 font-medium text-center">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("meds")}
+                        className="inline-flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition"
+                      >
+                        Meds
+                        <SortIcon
+                          column="meds"
+                          sortKey={sortKey}
+                          sortDirection={sortDirection}
+                        />
+                      </button>
+                    </th>
+
+                    <th className="px-5 py-3 font-medium text-center">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("imaging")}
+                        className="inline-flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition"
+                      >
+                        Imaging
+                        <SortIcon
+                          column="imaging"
+                          sortKey={sortKey}
+                          sortDirection={sortDirection}
+                        />
+                      </button>
+                    </th>
+
+                    <th className="px-5 py-3 font-medium">Actions</th>
                   </tr>
-                ) : (
-                  patients.map((patient) => (
-                    <tr
-                      key={patient.id}
-                      className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
-                    >
-                      <td className="px-5 py-3 font-mono text-blue-600 dark:text-blue-400 font-medium">
-                        {patient.id}
-                      </td>
-                      <td className="px-5 py-3 font-medium text-slate-900 dark:text-white">
-                        {patient.name}
-                      </td>
-                      <td className="px-5 py-3 font-medium text-slate-900 dark:text-white">
-                        {patient.email}
-                      </td>
-                      <td className="px-5 py-3 text-slate-600 dark:text-slate-300">
-                        {patient.insurancePayer}
-                      </td>
-                      <td className="px-5 py-3">
-                        <div className="font-mono text-xs text-slate-500 dark:text-slate-400">
-                          {patient.procedureCode}
-                        </div>
-                        <div className="text-sm text-slate-700 dark:text-slate-300">
-                          {patient.procedureName}
-                        </div>
-                      </td>
-                      <td className="px-5 py-3 font-mono text-slate-600 dark:text-slate-300">
-                        {patient.diagnosisCode}
-                      </td>
-                      <td className="px-5 py-3 text-center">
-                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-medium">
-                          {/* {patient._count?.notes ?? 0} */}
-                          {patient.notes.length ?? 0}
-                        </span>
-                      </td>
-                      <td className="px-5 py-3 text-center">
-                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-medium">
-                          {/* {patient._count?.medications ?? 0} */}
-                          {patient.medications.length ?? 0}
-                        </span>
-                      </td>
-                      <td className="px-5 py-3 text-center">
-                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-medium">
-                          {patient.imagingReports.length ?? 0}
-                          {/* {patient._count?.imagingReports ?? 0} */}
-                        </span>
-                      </td>
-                      <td className="px-5 py-3">
-                        <div className="flex items-center gap-3">
-                          <button
-                            onClick={() => {
-                              if (patient.id == null) return;
-                              openPatientModal(patient.id, "view");
-                            }}
-                            className="text-blue-600 hover:text-blue-700 dark:text-blue-400 text-xs font-semibold"
-                          >
-                            View
-                          </button>
-                          <button
-                            onClick={() => {
-                              if (patient.id == null) return;
-                              openPatientModal(patient.id, "edit");
-                            }}
-                            className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white text-xs font-semibold"
-                          >
-                            Edit
-                          </button>
-                          {/* --- DELETE BUTTON --- */}
-                          <button
-                            onClick={() => {
-                              if (patient.id == null) return;
-                              handleDelete(patient.id);
-                            }}
-                            className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-xs font-semibold"
-                          >
-                            Delete
-                          </button>
+                </thead>
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+                  {!Array.isArray(patients) || paginatedData.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={10}
+                        className="px-5 py-10 text-center text-slate-500"
+                      >
+                        <div className="flex flex-col items-center gap-3">
+                          <UserRound size={32} className="text-slate-400" />
+                          <p>
+                            {search.trim()
+                              ? "No patients match your search."
+                              : "No patients found."}
+                          </p>
+                          {!search.trim() && (
+                            <button
+                              onClick={openCreateModal}
+                              className="text-blue-600 dark:text-blue-400 text-sm font-medium"
+                            >
+                              Create the first patient
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                  ) : (
+                    paginatedData.map((patient, index) => {
+                      const serialNumber =
+                        (currentPage - 1) * pageSize + index + 1;
+                      return (
+                        <tr
+                          key={patient.id}
+                          className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
+                        >
+                          <td className="px-5 py-3 font-mono text-slate-400">
+                            {serialNumber}
+                          </td>
+                          <td className="px-5 py-3 font-medium text-slate-900 dark:text-white">
+                            {patient.name}
+                          </td>
+                          <td className="px-5 py-3 font-medium text-slate-900 dark:text-white">
+                            {patient.email}
+                          </td>
+                          <td className="px-5 py-3 text-slate-600 dark:text-slate-300">
+                            {patient.insurancePayer}
+                          </td>
+                          <td className="px-5 py-3">
+                            <div className="font-mono text-xs text-slate-500 dark:text-slate-400">
+                              {patient.procedureCode}
+                            </div>
+                            <div className="text-sm text-slate-700 dark:text-slate-300">
+                              {patient.procedureName}
+                            </div>
+                          </td>
+                          <td className="px-5 py-3 font-mono text-slate-600 dark:text-slate-300">
+                            {patient.diagnosisCode}
+                          </td>
+                          <td className="px-5 py-3 text-center">
+                            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-medium">
+                              {patient.notes.length ?? 0}
+                            </span>
+                          </td>
+                          <td className="px-5 py-3 text-center">
+                            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-medium">
+                              {patient.medications.length ?? 0}
+                            </span>
+                          </td>
+                          <td className="px-5 py-3 text-center">
+                            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-medium">
+                              {patient.imagingReports.length ?? 0}
+                            </span>
+                          </td>
+                          <td className="px-5 py-3">
+                            <div className="flex items-center gap-3">
+                              <button
+                                onClick={() => {
+                                  if (patient.id == null) return;
+                                  openPatientModal(patient.id, "view");
+                                }}
+                                className="text-blue-600 hover:text-blue-700 dark:text-blue-400 text-xs font-semibold cursor-pointer"
+                              >
+                                View
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (patient.id == null) return;
+                                  openPatientModal(patient.id, "edit");
+                                }}
+                                className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white text-xs font-semibold cursor-pointer"
+                              >
+                                Edit
+                              </button>
+                              {/* --- DELETE BUTTON --- */}
+                              <button
+                                onClick={() => {
+                                  if (patient.id == null) return;
+                                  handleDelete(patient.id);
+                                }}
+                                className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-xs font-semibold cursor-pointer"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Footer */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-t border-slate-200 dark:border-slate-800 text-sm text-slate-600 dark:text-slate-400">
+              <div>
+                {totalItems === 0
+                  ? "Showing 0 entries"
+                  : `Showing ${endEntry} of ${totalItems} entries`}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={goToPrevious}
+                  disabled={currentPage <= 1}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                >
+                  <ChevronLeft size={16} />
+                  Previous
+                </button>
+
+                <span className="px-2 text-slate-700 dark:text-slate-300">
+                  Page {currentPage} of {totalPages}
+                </span>
+
+                <button
+                  onClick={goToNext}
+                  disabled={currentPage >= totalPages}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                >
+                  Next
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          </>
         )}
       </div>
 

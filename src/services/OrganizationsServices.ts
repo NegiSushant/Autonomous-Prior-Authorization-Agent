@@ -94,4 +94,11 @@ export class OrganizationServices implements IOrganizationsServices {
       return false;
     }
   }
+
+  async ensureSameOrganization(
+    userId: number,
+    patientId: number,
+  ): Promise<boolean> {
+    return this.repository.isSameOrganization(userId, patientId);
+  }
 }

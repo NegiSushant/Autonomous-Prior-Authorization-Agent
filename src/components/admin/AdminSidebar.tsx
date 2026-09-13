@@ -12,6 +12,7 @@ import {
   X,
   ShieldCheck,
   User,
+  Building2,
 } from "lucide-react";
 
 const navItems = [
@@ -21,9 +22,9 @@ const navItems = [
     href: "/admin/organizations",
     icon: Landmark,
   },
-  // { name: "Organization Management", href: "/admin/organizations", icon: Users },
   { name: "Patient Management", href: "/admin/patients", icon: FileText },
   { name: "User Management", href: "/admin/user", icon: User },
+  { name: "User Request", href: "/admin/orgRequest", icon: Building2 },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

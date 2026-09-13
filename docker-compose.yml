@@ -16,6 +16,52 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+  redis:
+    image: redis:7-alpine
+    container_name: apa-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - apa_redisdata:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: apa-redisinsight
+    restart: unless-stopped
+    ports:
+      - "5540:5540"
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - apa_redisinsight:/data
 
 volumes:
   apa_pgdata:
+  apa_redisdata:
+  apa_redisinsight:
+#   redis:
+#     image: redis:7-alpine
+#     container_name: apa-redis
+#     restart: unless-stopped
+#     ports:
+#       - "6379:6379"
+#     volumes:
+#       - apa_redisdata:/data
+#     command: redis-server --appendonly yes
+#     healthcheck:
+#       test: ["CMD", "redis-cli", "ping"]
+#       interval: 5s
+#       timeout: 3s
+#       retries: 10
+
+# volumes:
+#   apa_pgdata:
+#   apa_redisdata:

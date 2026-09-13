@@ -19,4 +19,6 @@ export interface IOrganizationsRepository {
     payload: UpdateOrganizationDto,
   ): Promise<boolean>;
   deleteOrganizationByIdAsyn(orgId: number): Promise<boolean>;
+
+  isSameOrganization(userId: number, patientId: number): Promise<boolean>;
 }
