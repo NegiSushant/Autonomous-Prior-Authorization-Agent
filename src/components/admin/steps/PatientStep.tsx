@@ -105,7 +105,7 @@ export default function PatientStep({
     const proc = PROCEDURE_OPTIONS.find((p) => p.code === code);
     onChange("procedureCode", code);
     onChange("procedureName", proc?.name || "");
-    onChange("diagnosisCode", ""); // reset diagnosis when procedure changes
+    onChange("diagnosisCode", "");
   };
 
   return (
@@ -118,17 +118,6 @@ export default function PatientStep({
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Patient ID */}
-        {/* <Field label="Patient ID" htmlFor="patient-id" hint='e.g. "PAT006"'>
-          <input
-            id="patient-id"
-            value={data.id}
-            onChange={(e) => onChange("patientId", e.target.value)}
-            placeholder="PAT006"
-            className={inputClass}
-            required
-          />
-        </Field> */}
         {/* Patient ID - Only render if NOT in create mode */}
         {mode !== "create" && (
           <Field label="Patient ID" htmlFor="patient-id" hint="System assigned">

@@ -9,6 +9,7 @@ type OrganizationFormData = {
   address: string;
   phone: string;
   email: string;
+  domain: string;
   isActive: boolean;
 };
 
@@ -39,17 +40,21 @@ export default function OrganizationForm({
       address: "",
       phone: "",
       email: "",
+      domain: "",
       isActive: true,
-    }
+    },
   );
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value, type } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+      [name]:
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
@@ -110,17 +115,35 @@ export default function OrganizationForm({
       </div>
 
       {/* Type */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-slate-300">Type</label>
-        <select name="type" value={form.type} onChange={handleChange} className={inputClass}>
-          {ORG_TYPES.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
-        </select>
-      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-slate-300">Type</label>
+          <select
+            name="type"
+            value={form.type}
+            onChange={handleChange}
+            className={inputClass}
+          >
+            {ORG_TYPES.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+        </div>
 
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-slate-300">Email</label>
+          <input
+            name="domain"
+            type="domain"
+            value={form.domain}
+            onChange={handleChange}
+            placeholder="hospital.com"
+            className={inputClass}
+          />
+        </div>
+      </div>
       {/* Email + Phone */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">

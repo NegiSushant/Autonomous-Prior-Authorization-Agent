@@ -96,7 +96,8 @@ export default function ImagingStep({
               <Field label="Report Date" htmlFor={`img-date-${index}`}>
                 <input
                   id={`img-date-${index}`}
-                  value={img.reportDate}
+                  value={toDateInputValue(img.reportDate)}
+                  // value={img.reportDate}
                   onChange={(e) =>
                     onChange(index, "reportDate", e.target.value)
                   }
@@ -137,4 +138,12 @@ export default function ImagingStep({
       </div>
     </>
   );
+}
+
+function toDateInputValue(value: string | Date | null | undefined): string {
+  if (!value) return "";
+  const d = typeof value === "string" ? new Date(value) : value;
+  if (Number.isNaN(d.getTime())) return "";
+  // YYYY-MM-DD (from ISO / UTC midnight dates)
+  return d.toISOString().slice(0, 10);
 }

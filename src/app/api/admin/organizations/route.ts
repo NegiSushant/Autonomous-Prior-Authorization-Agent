@@ -47,7 +47,8 @@ export async function POST(req: Request) {
       type: body.type || "DEMO",
       address: body.address || null,
       phone: body.phone || null,
-      email: body.email || null,
+      email: body.email,
+      domain: body.domain,
       isActive: body.isActive ?? true,
       createdBy: sessionUser.email || "system",
     });

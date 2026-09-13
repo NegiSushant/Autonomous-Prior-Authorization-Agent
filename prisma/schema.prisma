@@ -18,7 +18,8 @@ model Organization {
   type             OrgType              @default(DEMO)
   address          String?
   phone            String?
-  email            String?
+  email            String
+  domain           String
   isActive         Boolean              @default(true)
   createdBy        String
   createdAt        DateTime             @default(now())

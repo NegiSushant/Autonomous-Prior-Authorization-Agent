@@ -106,7 +106,8 @@ export default function MedicationsStep({
               <Field label="Record Date" htmlFor={`med-date-${index}`}>
                 <input
                   id={`med-date-${index}`}
-                  value={med.recordDate}
+                  // value={med.recordDate}
+                  value={toDateInputValue(med.recordDate)}
                   onChange={(e) =>
                     onChange(index, "recordDate", e.target.value)
                   }
@@ -141,4 +142,13 @@ export default function MedicationsStep({
       </div>
     </>
   );
+}
+
+
+function toDateInputValue(value: string | Date | null | undefined): string {
+  if (!value) return "";
+  const d = typeof value === "string" ? new Date(value) : value;
+  if (Number.isNaN(d.getTime())) return "";
+  // YYYY-MM-DD (from ISO / UTC midnight dates)
+  return d.toISOString().slice(0, 10);
 }

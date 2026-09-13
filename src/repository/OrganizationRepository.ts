@@ -59,6 +59,7 @@ export class OrganizationRepository implements IOrganizationsRepository {
         data: {
           name: payload.name,
           email: payload.email,
+          domain: payload.domain,
           phone: payload.phone,
           address: payload.address,
           type: payload.type,
