@@ -99,7 +99,7 @@ export default function ArchitecturePage() {
         <div className="max-w-7xl mx-auto px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              The PoC Blueprint
+              The Agents Blueprint
             </h2>
             <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl mx-auto">
               How to architect this deterministic system using a state graph and

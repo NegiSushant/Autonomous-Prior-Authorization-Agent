@@ -1,6 +1,11 @@
 import { IAccessRequestRepository } from "@/lib/interfaces/IRepository/IAccessRequestRepository";
 import prismaClient from "@/lib/prisma";
-import { CreateAccessRequestDto, mapMonthlyVolumeToLicence, mapOrgType } from "@/types/access-request.dto";
+import {
+  AccessRequestResponseDto,
+  CreateAccessRequestDto,
+  mapMonthlyVolumeToLicence,
+  mapOrgType,
+} from "@/types/access-request.dto";
 
 export class AccessRequestRepository implements IAccessRequestRepository {
   async createRequestAccess(state: CreateAccessRequestDto): Promise<boolean> {
@@ -13,7 +18,9 @@ export class AccessRequestRepository implements IAccessRequestRepository {
           phone: state.phone,
           address: state.address,
           type: mapOrgType(state.type),
-          numOfLicenceRequired: mapMonthlyVolumeToLicence(state.numOfLicenceRequired),
+          numOfLicenceRequired: mapMonthlyVolumeToLicence(
+            state.numOfLicenceRequired,
+          ),
         },
       });
       return true;
@@ -22,5 +29,14 @@ export class AccessRequestRepository implements IAccessRequestRepository {
       return false;
     }
   }
-  //   grantUserAccessRequest(): Promise<boolean>;
+
+  async listUserAccessRequest(): Promise<AccessRequestResponseDto[] | null> {
+    try {
+      const data = await prismaClient.accessRequest.findMany();
+      return data;
+    } catch (error) {
+      console.error(`Error while listing user access: ${error}`);
+      return null;
+    }
+  }
 }

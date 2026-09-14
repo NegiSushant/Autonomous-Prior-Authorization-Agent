@@ -110,10 +110,21 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// // Optional: GET endpoint to list requests (for admin dashboard later)
-// export async function GET() {
-//   return NextResponse.json({
-//     requests: accessRequests,
-//     total: accessRequests.length,
-//   });
-// }
+export async function GET() {
+  try {
+    const services = getAccessRequestServices();
+
+    const data = await services.listAllAccessRequestUser();
+
+    return NextResponse.json({
+      success: true,
+      data: data,
+    });
+  } catch (error) {
+    console.error("Error in /api/request-access:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}

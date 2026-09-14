@@ -1,6 +1,6 @@
-import { CreateAccessRequestDto } from "@/types/access-request.dto";
+import { AccessRequestResponseDto, CreateAccessRequestDto } from "@/types/access-request.dto";
 
 export interface IAccessRequestRepository {
   createRequestAccess(state: CreateAccessRequestDto): Promise<boolean>;
-//   grantUserAccessRequest(): Promise<boolean>;
+  listUserAccessRequest(): Promise<AccessRequestResponseDto[] | null>;
 }
