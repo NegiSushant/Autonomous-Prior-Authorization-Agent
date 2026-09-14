@@ -14,6 +14,7 @@ import {
   User,
   Building2,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 const navItems = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -29,8 +30,15 @@ const navItems = [
 ];
 
 export default function AdminSidebar() {
+  const { data: session } = useSession();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const userRole = session?.user?.role;
+
+  const filteredNavItems = navItems.filter(
+    (item) => item.name !== "User Request" || userRole === "SUPERADMIN",
+  );
 
   return (
     <aside
@@ -53,7 +61,7 @@ export default function AdminSidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1 overflow-x-hidden">
-        {navItems.map((item) => {
+        {filteredNavItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
 
