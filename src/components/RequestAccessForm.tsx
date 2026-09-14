@@ -10,6 +10,7 @@ export function RequestAccessModal({
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   // Form fields
   const [email, setEmail] = useState(userEmail || "");
@@ -18,7 +19,7 @@ export function RequestAccessModal({
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [type, setType] = useState("HOSPITAL");
-  const [monthlyVolume, setMonthlyVolume] = useState("<100");
+  const [numOfLicenceRequired, setNumOfLicenceRequired] = useState("<100");
 
   // Email verification state
   const [otp, setOtp] = useState("");
@@ -39,10 +40,10 @@ export function RequestAccessModal({
     });
 
     const data = await res.json();
-    console.log(`Resoponse from send otp method: ${data}`)
+    console.log(`Resoponse from send otp method: ${data}`);
 
     if (!res.ok) {
-      console.log(`Error from send otp method: ${data}`)
+      console.log(`Error from send otp method: ${data}`);
       return {
         success: false,
         message: data.error || "Failed to send OTP",
@@ -72,6 +73,37 @@ export function RequestAccessModal({
     }
 
     return { success: true, message: data.message };
+  };
+
+  const submitAccessRequestApi = async () => {
+    const res = await fetch("/api/request-access", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        organizationName,
+        domainName,
+        email,
+        phone,
+        address,
+        type,
+        numOfLicenceRequired,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return {
+        success: false,
+        message: data.error || "Failed to submit request",
+      };
+    }
+
+    return {
+      success: true,
+      message: data.message || "Request submitted successfully",
+      requestId: data.requestId,
+    };
   };
   // ------------------------------------
 
@@ -136,16 +168,25 @@ export function RequestAccessModal({
     }
 
     setIsSubmitting(true);
+    setSubmitError("");
 
-    // Final API call with all data (you can implement this later)
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const result = await submitAccessRequestApi();
 
-    setIsSubmitting(false);
-    setIsSuccess(true);
-
-    setTimeout(() => {
-      onClose();
-    }, 2000);
+      if (result.success) {
+        setIsSuccess(true);
+        // Auto-close after 2 seconds
+        setTimeout(() => {
+          onClose();
+        }, 2000);
+      } else {
+        setSubmitError(result.message || "Failed to submit request.");
+      }
+    } catch {
+      setSubmitError("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -354,8 +395,8 @@ export function RequestAccessModal({
                   Expected Monthly Volume
                 </label>
                 <select
-                  value={monthlyVolume}
-                  onChange={(e) => setMonthlyVolume(e.target.value)}
+                  value={numOfLicenceRequired}
+                  onChange={(e) => setNumOfLicenceRequired(e.target.value)}
                   className="w-full rounded-lg border border-slate-600 bg-slate-900/60 px-3.5 py-2.5 text-sm text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all"
                 >
                   <option value="<100">Less than 100 requests</option>
@@ -363,6 +404,11 @@ export function RequestAccessModal({
                   <option value="500+">500+ requests</option>
                 </select>
               </div>
+
+              {/* Submit error */}
+              {submitError && (
+                <p className="text-sm text-red-400">{submitError}</p>
+              )}
 
               {/* Actions */}
               <div className="flex items-center justify-end gap-3 pt-3">

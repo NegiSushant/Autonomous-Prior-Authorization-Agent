@@ -12,7 +12,7 @@ export default function AdminTopbar() {
   const [profileOpen, setProfileOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  
+
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,12 +40,17 @@ export default function AdminTopbar() {
   const userName = session?.user?.name || "Admin";
   const userEmail = session?.user?.email || "";
   const initials = userName.substring(0, 2).toUpperCase();
+  const userRole = session?.user?.role;
 
   return (
     <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur flex items-center justify-between px-6 shrink-0 transition-colors duration-300">
       <div>
-        <h1 className="text-lg font-semibold text-slate-900 dark:text-white">Admin Dashboard</h1>
-        <p className="text-xs text-slate-500 dark:text-slate-400">Management Panel</p>
+        <h1 className="text-lg font-semibold text-slate-900 dark:text-white">
+          Admin Dashboard
+        </h1>
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          Management Panel
+        </p>
       </div>
 
       {/* Right Side Actions */}
@@ -72,11 +77,13 @@ export default function AdminTopbar() {
             </div>
             <div className="text-left hidden sm:block">
               <p className="text-sm font-medium leading-tight">{userName}</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Admin</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {userRole}
+              </p>
             </div>
-            <ChevronDown 
-              size={14} 
-              className={`text-slate-500 dark:text-slate-400 transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`} 
+            <ChevronDown
+              size={14}
+              className={`text-slate-500 dark:text-slate-400 transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`}
             />
           </button>
 

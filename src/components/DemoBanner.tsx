@@ -13,7 +13,7 @@ export default function DemoBanner() {
   const user = session?.user as SessionUser | undefined;
 
   // If not org 1, return null immediately. The component remains invisible.
-  if (user?.orgId !== 1) return null;
+  if (user?.orgId !== 1 || user?.role === "SUPERADMIN") return null;
   return (
     <div>
       {/* 2. DEMO BANNER: Conditionally rendered if orgId === 1 */}

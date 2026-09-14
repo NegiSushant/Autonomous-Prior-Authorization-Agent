@@ -1,8 +1,10 @@
+import { IAccessRequestServices } from "@/lib/interfaces/IServices/IAccessRequestServices";
 import { IEmbeddingServices } from "@/lib/interfaces/IServices/IEmbeddingServices";
 import { IOrganizationsServices } from "@/lib/interfaces/IServices/IOrganizationsService";
 import { IPatientInfoService } from "@/lib/interfaces/IServices/IPatientInfoService";
 import { IPriorAuthService } from "@/lib/interfaces/IServices/IPriorAuthServices";
 import { IUserServices } from "@/lib/interfaces/IServices/IUserService";
+import { AccessRequestServices } from "@/services/AccessRequestServices";
 import { EmbeddingServices } from "@/services/EmbeddingServices";
 import { OrganizationServices } from "@/services/OrganizationsServices";
 import { PatientInfoServices } from "@/services/PatientInfoServices";
@@ -14,6 +16,7 @@ let patientServiceInstance: IPatientInfoService | null = null;
 let orgsServiceInstance: IOrganizationsServices | null = null;
 let priorAuthServiceInstance: IPriorAuthService | null = null;
 let embeddingServiceInstance: IEmbeddingServices | null = null;
+let accessRequestServices: IAccessRequestServices | null = null;
 
 export function getUserService(): IUserServices {
   if (!userServiceInstance) {
@@ -48,4 +51,11 @@ export function getEmbeddingService(): IEmbeddingServices {
     embeddingServiceInstance = new EmbeddingServices();
   }
   return embeddingServiceInstance;
+}
+
+export function getAccessRequestServices(): IAccessRequestServices {
+  if (!accessRequestServices) {
+    accessRequestServices = new AccessRequestServices();
+  }
+  return accessRequestServices;
 }
