@@ -93,18 +93,19 @@ export class AccessRequestServices implements IAccessRequestServices {
 
       // create the organization and admin user for the orgs
       const orgsPayload: CreateOrganizationDto = {
-          name: requestInfo.organizationName,
-          type: requestInfo.type,
-          address: requestInfo.address,
-          phone: requestInfo.phone,
-          email: requestInfo.email,
-          domain: requestInfo.domainName,
-          createdBy: reviewer
+        name: requestInfo.organizationName,
+        type: requestInfo.type,
+        address: requestInfo.address,
+        phone: requestInfo.phone,
+        email: requestInfo.email,
+        domain: requestInfo.domainName,
+        createdBy: reviewer,
       };
 
-      const createOrga = await this.orgServices.createNewOrganization(orgsPayload);
+      const createOrga =
+        await this.orgServices.createNewOrganization(orgsPayload);
 
-      // const isUserAdminCreated = await 
+      // const isUserAdminCreated = await
 
       // send message to the user with the
 
