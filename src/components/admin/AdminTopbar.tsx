@@ -43,7 +43,7 @@ export default function AdminTopbar() {
   const userRole = session?.user?.role;
 
   return (
-    <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur flex items-center justify-between px-6 shrink-0 transition-colors duration-300">
+    <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur flex items-center justify-between px-6 shrink-0 transition-colors duration-300 relative z-40">
       <div>
         <h1 className="text-lg font-semibold text-slate-900 dark:text-white">
           Admin Dashboard
@@ -89,7 +89,7 @@ export default function AdminTopbar() {
 
           {/* Dropdown Menu */}
           {profileOpen && (
-            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl py-2 z-50 text-slate-900 dark:text-white animate-in fade-in slide-in-from-top-2 duration-150">
+            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl py-2 z-100 text-slate-900 dark:text-white animate-in fade-in slide-in-from-top-2 duration-150">
               <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-800">
                 <p className="text-sm font-medium truncate">{userEmail}</p>
               </div>
