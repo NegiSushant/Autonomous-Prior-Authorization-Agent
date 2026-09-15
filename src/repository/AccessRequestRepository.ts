@@ -6,6 +6,10 @@ import {
   mapMonthlyVolumeToLicence,
   mapOrgType,
 } from "@/types/access-request.dto";
+import {
+  AccessRequestStatus,
+  IAccessRequest,
+} from "@/types/access-request.entity";
 
 export class AccessRequestRepository implements IAccessRequestRepository {
   async createRequestAccess(state: CreateAccessRequestDto): Promise<boolean> {
@@ -36,6 +40,41 @@ export class AccessRequestRepository implements IAccessRequestRepository {
       return data;
     } catch (error) {
       console.error(`Error while listing user access: ${error}`);
+      return null;
+    }
+  }
+
+  async isUserRequestUdateById(
+    id: number,
+    status: AccessRequestStatus,
+    adminNote: string | null,
+    approvedBy: string,
+  ): Promise<boolean> {
+    try {
+      await prismaClient.accessRequest.update({
+        where: { id: id },
+        data: {
+          status: status,
+          adminNotes: adminNote,
+          reviewedBy: approvedBy,
+          updatedAt: new Date(),
+        },
+      });
+      return true;
+    } catch (error) {
+      console.error(`Error while updating status of user access: ${error}`);
+      return false;
+    }
+  }
+
+  async userAccessInfoById(id: number): Promise<IAccessRequest | null> {
+    try {
+      const info = await prismaClient.accessRequest.findUnique({
+        where: { id },
+      });
+      return info;
+    } catch (error) {
+      console.error(`Error while retriving user access info: ${error}`);
       return null;
     }
   }
