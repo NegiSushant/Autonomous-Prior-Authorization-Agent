@@ -1,25 +1,31 @@
-import { getAccessRequestRepository } from "@/di/reposetriesDiI";
-import { getOrganizationsService } from "@/di/servicesDil";
+import {
+  getAccessRequestRepository,
+  getOrganizationRepository,
+  getUserRepository,
+} from "@/di/reposetriesDiI";
 import { AccessRequestStatus } from "@/generated/prisma/enums";
 import { IAccessRequestRepository } from "@/lib/interfaces/IRepository/IAccessRequestRepository";
+import { IOrganizationsRepository } from "@/lib/interfaces/IRepository/IOrganizationsRepository";
+import { IUserRepository } from "@/lib/interfaces/IRepository/IUserRepository";
 import { IAccessRequestServices } from "@/lib/interfaces/IServices/IAccessRequestServices";
-import { IOrganizationsServices } from "@/lib/interfaces/IServices/IOrganizationsService";
 import {
   AccessRequestResponseDto,
   CreateAccessRequestDto,
 } from "@/types/access-request.dto";
 import { CreateOrganizationDto } from "@/types/organizations.dto";
-import { SessionUser } from "@/types/users.dto";
+import { CreateUserDto, SessionUser } from "@/types/users.dto";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 
 export class AccessRequestServices implements IAccessRequestServices {
   private repository: IAccessRequestRepository;
-  private orgServices: IOrganizationsServices;
+  private userRepository: IUserRepository;
+  private orgRepository: IOrganizationsRepository;
 
   constructor() {
     this.repository = getAccessRequestRepository();
-    this.orgServices = getOrganizationsService();
+    this.userRepository = getUserRepository();
+    this.orgRepository = getOrganizationRepository();
   }
 
   async createAccessRequest(state: CreateAccessRequestDto): Promise<boolean> {
@@ -86,9 +92,8 @@ export class AccessRequestServices implements IAccessRequestServices {
         return false;
       }
       // create random 6-8 word password
-
-      // const password = crypto.randomInt(100000, 999999).toString();
       const password = generatePassword();
+      console.log(`Generated User Password: ${password}`);
       const hashPassword = await bcrypt.hash(password, 10);
 
       // create the organization and admin user for the orgs
@@ -103,9 +108,18 @@ export class AccessRequestServices implements IAccessRequestServices {
       };
 
       const createOrga =
-        await this.orgServices.createNewOrganization(orgsPayload);
+        await this.orgRepository.insertOrganizationAsync(orgsPayload);
 
-      // const isUserAdminCreated = await
+      const userPayload: CreateUserDto = {
+        email: `admin@${requestInfo.domainName}`,
+        password: hashPassword,
+        name: `Admin ${requestInfo.organizationName}`,
+        role: "ADMIN",
+        organizationId: createOrga,
+      };
+
+      const isUserAdminCreated =
+        await this.userRepository.insertUserDataAsync(userPayload);
 
       // send message to the user with the
 

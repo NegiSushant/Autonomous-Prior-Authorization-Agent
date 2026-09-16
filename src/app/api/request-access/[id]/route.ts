@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { getAccessRequestServices } from "@/di/servicesDil";
+import { requireAuth } from "@/lib/requireAuth";
 
 export async function PATCH(
   request: Request,
@@ -7,6 +8,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const sessionUser = await requireAuth(["SUPERADMIN"]);
     // 2. Await the params before accessing .id
     const resolvedParams = await params;
     const id = parseInt(resolvedParams.id, 10);
@@ -38,18 +40,24 @@ export async function PATCH(
       );
     }
 
-    const updatedRequest = await prisma.accessRequest.update({
-      where: { id },
-      data: {
-        status,
-        adminNotes: adminNotes?.trim() || null,
-        updatedAt: new Date(),
-      },
-    });
+    const service = getAccessRequestServices();
+    const isRequestCompleted = await service.actionOnAccessRequest(
+      status,
+      adminNotes,
+      id,
+      sessionUser,
+    );
+
+    if (!isRequestCompleted) {
+      return NextResponse.json(
+        { success: false, error: "Internal Server Error" },
+        { status: 500 },
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      data: updatedRequest,
+      message: "Request Created Successfully!",
     });
   } catch (error) {
     console.error(`[ACCESS_REQUEST_PATCH] Error:`, error);
