@@ -153,6 +153,28 @@ model PolicyChunk {
   @@index([procedure])
 }
 
+model AccessRequest {
+  id                      Int                       @id @default(autoincrement())
+  organizationName        String
+  domainName              String
+  email                   String
+  phone                   String
+  address                 String
+  type                    OrgType
+  numOfLicenceRequired    RequiredLicence
+  status                  AccessRequestStatus       @default(PENDING)
+  adminNotes              String?
+
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  reviewedBy              String?
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+  @@map("access_requests")
+}
+
 enum UserRole {
   SUPERADMIN
   ADMIN
@@ -164,4 +186,17 @@ enum OrgType{
   HOSPITAL
   CLINIC
   OTHERS
+}
+
+enum RequiredLicence {
+  LESS_THAN_100
+  BETWEEN_100_500
+  MORE_THAN_500
+	@@map("MonthlyVolume")
+}
+
+enum AccessRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

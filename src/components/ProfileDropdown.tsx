@@ -37,8 +37,8 @@ export default function ProfileDropdown() {
   const userName = session?.user?.name || "User Account";
   const userEmail = session?.user?.email || "user@authguardian.ai";
   const userInitials = userName.substring(0, 2).toUpperCase();
-  const isAdmin =
-    session?.user?.role === "ADMIN" || session?.user?.role === "SUPERADMIN";
+  const userRole = session?.user?.role;
+  const isAdmin = userRole === "ADMIN" || userRole === "SUPERADMIN";
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -51,8 +51,11 @@ export default function ProfileDropdown() {
           {userInitials}
         </div>
         <div className="text-left hidden sm:block">
-          <p className="text-xs font-bold text-slate-900 dark:text-white leading-tight">
+          <p className="text-sm font-medium text-slate-900 dark:text-white leading-tight">
             {userName}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            {userRole}
           </p>
         </div>
         <ChevronDown

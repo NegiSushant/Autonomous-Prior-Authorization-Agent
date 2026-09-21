@@ -1,7 +1,9 @@
+import { IAccessRequestRepository } from "@/lib/interfaces/IRepository/IAccessRequestRepository";
 import { IAgentsDataRepository } from "@/lib/interfaces/IRepository/IAgentsDataRepository";
 import { IOrganizationsRepository } from "@/lib/interfaces/IRepository/IOrganizationsRepository";
 import { IPatientDataRepository } from "@/lib/interfaces/IRepository/IPatientDataRepository";
 import { IUserRepository } from "@/lib/interfaces/IRepository/IUserRepository";
+import { AccessRequestRepository } from "@/repository/AccessRequestRepository";
 import { AgentsDataRepository } from "@/repository/AgentsDataRepository";
 import { OrganizationRepository } from "@/repository/OrganizationRepository";
 import { PatientDataRepository } from "@/repository/PatientDataRepository";
@@ -11,6 +13,7 @@ let patientDataRepository: IPatientDataRepository | null = null;
 let organisationRepository: IOrganizationsRepository | null = null;
 let userRepository: IUserRepository | null = null;
 let agentRAGRepository: IAgentsDataRepository | null = null;
+let accessRequestRepository: IAccessRequestRepository | null = null;
 
 export function getPatientDataRepository(): IPatientDataRepository {
   if (!patientDataRepository) {
@@ -38,4 +41,11 @@ export function getAgentRAGRepository(): IAgentsDataRepository {
     agentRAGRepository = new AgentsDataRepository();
   }
   return agentRAGRepository;
+}
+
+export function getAccessRequestRepository(): IAccessRequestRepository {
+  if (!accessRequestRepository) {
+    accessRequestRepository = new AccessRequestRepository();
+  }
+  return accessRequestRepository;
 }

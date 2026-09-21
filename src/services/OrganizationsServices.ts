@@ -58,7 +58,7 @@ export class OrganizationServices implements IOrganizationsServices {
     try {
       const isOrgCreated =
         await this.repository.insertOrganizationAsync(payload);
-      if (!isOrgCreated) return false;
+      if (isOrgCreated === null) return false;
       return true;
     } catch (error) {
       console.error(`Error while creating new organization: ${error}`);

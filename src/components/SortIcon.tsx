@@ -17,7 +17,12 @@ type SortKey =
   | "notes"
   | "meds"
   | "imaging"
-  | "domain";
+  | "domain"
+  | "organizationName"
+  | "domainName"
+  | "numOfLicenceRequired"
+  | "createdAt";
+;
 
 export type SortDirection = "asc" | "desc";
 

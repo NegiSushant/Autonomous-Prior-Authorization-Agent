@@ -53,9 +53,9 @@ export class OrganizationRepository implements IOrganizationsRepository {
   // write ops
   async insertOrganizationAsync(
     payload: CreateOrganizationDto,
-  ): Promise<boolean> {
+  ): Promise<number | null> {
     try {
-      await prismaClient.organization.create({
+      const newOrg = await prismaClient.organization.create({
         data: {
           name: payload.name,
           email: payload.email,
@@ -67,10 +67,10 @@ export class OrganizationRepository implements IOrganizationsRepository {
           createdBy: payload.createdBy,
         },
       });
-      return true;
+      return newOrg.id;
     } catch (error) {
       console.error("Erroe while insterting data: ", error);
-      return false;
+      return null;
     }
   }
 

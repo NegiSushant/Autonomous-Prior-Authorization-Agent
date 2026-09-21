@@ -13,7 +13,9 @@ export interface IOrganizationsRepository {
   getOrganizationByIdAsync(orgId: number): Promise<IOrganizations | null>;
 
   // write ops
-  insertOrganizationAsync(payload: CreateOrganizationDto): Promise<boolean>;
+  insertOrganizationAsync(
+    payload: CreateOrganizationDto,
+  ): Promise<number | null>;
   updateOrganizationByIdAsync(
     orgId: number,
     payload: UpdateOrganizationDto,
